@@ -17,5 +17,6 @@ namespace TruckyV2.Clases
         public string UsuarioCreacion { get; set; }
         public int EtiquetaParcial { get; set; }
         public string Proceso { get; set; }
+        public int CantEtqSoli { get; set; }
     }
 }

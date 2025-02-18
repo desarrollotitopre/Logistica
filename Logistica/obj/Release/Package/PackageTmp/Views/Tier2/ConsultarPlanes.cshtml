@@ -1,0 +1,110 @@
+﻿@{
+    ViewBag.Title = "ModificarPlan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="header-section">
+        <h1 class="mt-2">Etiquetas entregadas</h1>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item active">Consultar etiquetas entregadas</li>
+        </ol>
+    </div>
+
+
+
+    <!-- Main Card -->
+    <div class="card">
+        <!-- Card Header -->
+        <div class="card-header">
+            <i class="fas fa-boxes me-1"></i>
+            Etiquetas entregadas
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+            <!-- Process Selection -->
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="plan" class="form-label">Plan</label>
+                        <select class="form-control" id="plan" name="plan">
+                            <option value="Selecciona" selected>Selecciona el plan</option>
+                            <option value="ENSAMBLE">Ensamble</option>
+                            <option value="PRENSAS">Prensas</option>
+                        </select>
+                        <br />
+
+                        <label for="linea" class="form-label">Linea</label>
+                        <select class="form-control" id="linea" name="linea" disabled>
+                            <option value="Selecciona" selected>Selecciona la linea</option>
+                        </select>
+                        <br />
+                        <div>
+                            <input type="checkbox"
+                                   id="planCompleto"
+                                   name="planCompleto" disabled />
+                            <label for="planCompleto">Mostrar plan completo</label>
+                        </div>
+                        <br />
+
+                        <label for="startDate"> Fecha </label>
+                        <input id="startDate" class="form-control" type="date" disabled />
+                        <br />
+
+                        <button id="showResume" class="btn btn-primary mt-3" onclick="showResume()">Mostrar resumen</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="spinner" class="text-center" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+
+            <!-- Error Container -->
+            <div id="errorContainer" class="alert alert-danger mt-3" style="display: none;"></div>
+
+            <div id="titleDiv" class="alert alert-info mt-3" style="display: none;">
+            </div>
+
+            <!-- Data Table -->
+            <div class="table-responsive mt-3">
+                <table id="tablaResumen" class="table-custom" style="width:70%">
+                    <thead>
+                        <tr>
+                            <th class="break-word" id="lineaColumn">Linea</th>
+                            <th class="break-word">Numero de parte</th>
+                            <th class="break-word">Cantidad Etiquetas</th>
+                            <th class="break-word">Etiquetas Parciales</th>
+                            <th class="break-word">Usuario recibio</th>
+                            <th class="break-word">Fecha de recibido</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<link href="~/styles/StyleDashboard.css" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.com/libraries/bootstrap-datetimepicker/4.17.37"></script>
+
+@section scripts {
+    <script>
+        var signoutUrl = "@Url.Action("SignOut", "Acceso")";
+        const AutorizedBy = "@Session["Nombre_Completo"]";
+        var nombreUsuario = '@Session["Nombre_Completo"]';
+
+    </script>
+
+    <script src="~/assets/js/Tier2/ConsultarPlanes.js"></script>
+
+}

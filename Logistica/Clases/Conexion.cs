@@ -631,6 +631,93 @@ namespace TruckyV2.Clases
             return sb.ToString();
         }
         //PLANES ETIQUETAS SEMANAL
+        
+        
+        ////// Plan etiquetas
+        public bool InsertarDatosPlanXLSX(DataTable datos)
+        {
+            bool result = false;
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(cnP))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("InsertarPlanSemanalEtiquetas", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        SqlParameter tableParam = cmd.Parameters.AddWithValue("@PlanSemanal", datos);
+                        tableParam.SqlDbType = SqlDbType.Structured;
+
+                        cmd.ExecuteNonQuery();
+                    }
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error: " + ex.Message);
+                result = false;
+            }
+
+            return result;
+        }
+
+        ////// Modificar plan
+        public List<RegistroPlanBD> consultarPlanes(string proceso, string fecha)
+        {
+            List<RegistroPlanBD> registros = new List<RegistroPlanBD>();
+            if (string.IsNullOrEmpty(proceso) || string.IsNullOrEmpty(fecha))
+            {
+                return registros;
+            }
+            DateTime fechaConvertida;
+            if (!DateTime.TryParse(fecha, out fechaConvertida))
+            {
+                return registros;
+            }
+            try
+            {
+
+                using (SqlConnection connection = new SqlConnection(cnP))
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand("SELECT * FROM PlanSemanalEtiquetas WHERE Proceso = @Proceso AND FechaPlan = @Fecha ORDER BY Linea, NoParte", connection))
+                    {
+                        command.Parameters.Add("@Proceso", SqlDbType.VarChar).Value = proceso;
+                        command.Parameters.Add("@Fecha", SqlDbType.Date).Value = fechaConvertida;
+
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var registro = new RegistroPlanBD
+                                {
+                                    Linea = reader["Linea"].ToString(),
+                                    TituloPlan = reader["TituloPlan"].ToString(),
+                                    NoParte = reader["NoParte"].ToString(),
+                                    FechaPlan = Convert.ToDateTime(reader["FechaPlan"]),
+                                    CantidadEtiquetas = Convert.ToInt32(reader["CantidadEtiquetas"]),
+                                    UsuarioCreacion = reader["UsuarioCreacion"].ToString(),
+                                    EtiquetaParcial = Convert.ToInt32(reader["EtiquetaParcial"]),
+                                    Proceso = reader["Proceso"].ToString(),
+                                    CantEtqSoli = Convert.ToInt32(reader["CantEtqSoli"])
+                                };
+                                registros.Add(registro);
+                            }
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            return registros;
+        }
+
         public bool actualizarMultiplesRegistros(string proceso, string fecha, List<RegistroActualizacion> registros)
         {
 
@@ -660,13 +747,18 @@ namespace TruckyV2.Clases
                         {
                             foreach (var registro in registros)
                             {
-                                using (SqlCommand command = new SqlCommand(
-                                    @"UPDATE PlanSemanalEtiquetas 
-                              SET CantidadEtiquetas = @CantidadEtiquetas, 
-                                  EtiquetaParcial = @EtiquetaParcial 
-                              WHERE Proceso = @Proceso 
-                              AND CONVERT(date, FechaPlan) = @Fecha 
-                              AND NoParte = @NoParte", connection, transaction))
+                                using (SqlCommand command = new SqlCommand(@"
+                                    UPDATE PlanSemanalEtiquetas 
+                                    SET 
+                                        CantidadEtiquetas = @CantidadEtiquetas, 
+                                        EtiquetaParcial = @EtiquetaParcial, 
+                                        CantEtqSoli = CASE
+                                                        WHEN CantEtqSoli = CantidadEtiquetas THEN @CantidadEtiquetas
+                                                        ELSE CantEtqSoli
+                                                      END
+                                    WHERE Proceso = @Proceso 
+                                    AND CONVERT(date, FechaPlan) = @Fecha 
+                                    AND NoParte = @NoParte", connection, transaction))
                                 {
                                     command.Parameters.Add("@Proceso", SqlDbType.VarChar).Value = proceso;
                                     command.Parameters.Add("@Fecha", SqlDbType.Date).Value = fechaConvertida;
@@ -696,85 +788,230 @@ namespace TruckyV2.Clases
                 return false;
             }
         }
-        public List<RegistroPlanBD> consultarPlanes(string proceso, string fecha)
+
+        //////   Consultar Planes
+        public List<string> cargarLineas(string PlanSeleccionado)
         {
-            List<RegistroPlanBD> registros = new List<RegistroPlanBD>();
-            if (string.IsNullOrEmpty(proceso) || string.IsNullOrEmpty(fecha))
+            List<string> listaLineas = new List<string>();
+            using (SqlConnection connection = new SqlConnection(cnP))
             {
-                return registros;
+                try
+                {
+                    connection.Open();
+                    string query = "Select DISTINCT(Linea) FROM PlanSemanalEtiquetas WHERE Proceso = @PlanSeleccionado ORDER BY Linea";
+
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@PlanSeleccionado", PlanSeleccionado);
+
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+
+                                string Linea = reader["Linea"].ToString();
+                                listaLineas.Add(Linea);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Error en consultar lineas: " + ex.Message);
+                    throw new Exception("Error al cargar las líneas: " + ex.Message);
+                }
             }
+            return listaLineas;
+        }
+
+        public List<ResumenPlan> ObtenerResumenCompleto(string plan, string fecha)
+        {
+            List<ResumenPlan> resumen = new List<ResumenPlan>();
+
+            if (string.IsNullOrEmpty(plan) || string.IsNullOrEmpty(fecha))
+            {
+                return resumen;
+            }
+
             DateTime fechaConvertida;
+
             if (!DateTime.TryParse(fecha, out fechaConvertida))
             {
-                return registros;
+                return resumen;
             }
+
             try
             {
-
                 using (SqlConnection connection = new SqlConnection(cnP))
                 {
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("SELECT * FROM PlanSemanalEtiquetas WHERE Proceso = @Proceso AND FechaPlan = @Fecha", connection))
+                    using (SqlCommand command = new SqlCommand(
+                        "Select * FROM Tier2_EntregaEtiquetas WHERE FechaPlan = @Fecha AND Proceso = @Plan ORDER BY Linea, NoParte", connection))
                     {
-                        command.Parameters.Add("@Proceso", SqlDbType.VarChar).Value = proceso;
+                        command.Parameters.Add("@Plan", SqlDbType.VarChar).Value = plan;
                         command.Parameters.Add("@Fecha", SqlDbType.Date).Value = fechaConvertida;
 
                         using (var reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                var registro = new RegistroPlanBD
+                                var registro = new ResumenPlan
                                 {
                                     Linea = reader["Linea"].ToString(),
-                                    TituloPlan = reader["TituloPlan"].ToString(),
                                     NoParte = reader["NoParte"].ToString(),
-                                    FechaPlan = Convert.ToDateTime(reader["FechaPlan"]),
-                                    CantidadEtiquetas = Convert.ToInt32(reader["CantidadEtiquetas"]),
-                                    UsuarioCreacion = reader["UsuarioCreacion"].ToString(),
-                                    EtiquetaParcial = Convert.ToInt32(reader["EtiquetaParcial"]),
-                                    Proceso = reader["Proceso"].ToString()
+                                    CantidadEtiquetas = (reader.IsDBNull(reader.GetOrdinal("CantidadEtiquetas")) ? 0 : reader.GetInt32(reader.GetOrdinal("CantidadEtiquetas"))).ToString(),
+                                    EtiquetasParciales = (reader.IsDBNull(reader.GetOrdinal("CantidadParcial")) ? 0 : reader.GetInt32(reader.GetOrdinal("CantidadParcial"))).ToString(),
+                                    UsuarioRecibio = reader["UsuarioRecibio"].ToString(),
+                                    FechaEntrega = reader["FechaEntrega"].ToString()
                                 };
-                                registros.Add(registro);
+                                resumen.Add(registro);
                             }
                         }
                     }
-
                 }
+                return resumen;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                System.Diagnostics.Debug.WriteLine("Error en el Conexion-ObtenerResumenCompleto: " + ex.Message);
                 throw;
             }
-            return registros;
         }
-        public bool InsertarDatosPlanXLSX(DataTable datos)
+
+        public List<ResumenPlan> ObtenerResumenPorLinea(string plan, string fecha, string linea)
         {
-            bool result = false;
+            List<ResumenPlan> resumen = new List<ResumenPlan>();
+
+            if (string.IsNullOrEmpty(plan) || string.IsNullOrEmpty(fecha))
+            {
+                return resumen;
+            }
+
+            DateTime fechaConvertida;
+
+            if (!DateTime.TryParse(fecha, out fechaConvertida))
+            {
+                return resumen;
+            }
+
             try
             {
-                using (SqlConnection conn = new SqlConnection(cnP))
+                using (SqlConnection connection = new SqlConnection(cnP))
                 {
-                    conn.Open();
-                    using (SqlCommand cmd = new SqlCommand("InsertarPlanSemanalEtiquetas", conn))
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand(
+                        "Select * FROM Tier2_EntregaEtiquetas WHERE FechaPlan = @Fecha AND Proceso = @Plan AND Linea = @Linea", connection))
                     {
-                        cmd.CommandType = CommandType.StoredProcedure;
+                        command.Parameters.Add("@Plan", SqlDbType.VarChar).Value = plan;
+                        command.Parameters.Add("@Fecha", SqlDbType.Date).Value = fechaConvertida;
+                        command.Parameters.Add("@Linea", SqlDbType.VarChar).Value = linea;
 
-                        SqlParameter tableParam = cmd.Parameters.AddWithValue("@PlanSemanal", datos);
-                        tableParam.SqlDbType = SqlDbType.Structured;
-
-                        cmd.ExecuteNonQuery();
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                var registro = new ResumenPlan
+                                {
+                                    NoParte = reader["NoParte"].ToString(),
+                                    CantidadEtiquetas = (reader.IsDBNull(reader.GetOrdinal("CantidadEtiquetas")) ? 0 : reader.GetInt32(reader.GetOrdinal("CantidadEtiquetas"))).ToString(),
+                                    EtiquetasParciales = (reader.IsDBNull(reader.GetOrdinal("CantidadParcial")) ? 0 : reader.GetInt32(reader.GetOrdinal("CantidadParcial"))).ToString(),
+                                    UsuarioRecibio = reader["UsuarioConfirmado"].ToString(),
+                                    FechaEntrega = reader["FechaEntrega"].ToString()
+                                };
+                                resumen.Add(registro);
+                            }
+                        }
                     }
-                    result = true;
                 }
+                return resumen;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error: " + ex.Message);
-                result = false;
+                System.Diagnostics.Debug.WriteLine("Error en el Conexion-ObtenerResumenCompleto: " + ex.Message);
+                throw;
             }
-
-            return result;
         }
+
+        //////   Catalogo etiquetas
+        public List<Object> consultarEtiquetas()
+        {
+            var listaEtq = new List<Object>();
+            using (SqlConnection connection = new SqlConnection(cnP))
+            {
+                try
+                {
+                    connection.Open();
+                    string query = "SELECT NoParte, COUNT(NoEtiqueta) AS Total FROM CAT_ETIQS_PLASTICAS GROUP BY NoParte ORDER BY NoParte";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                listaEtq.Add(new
+                                {
+                                    NoParte = reader["NoParte"].ToString(),
+                                    Total = Convert.ToInt32(reader["Total"])
+                                });
+                            }
+                        }
+                    }
+                    return listaEtq;
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+                finally
+                {
+                    if (connection.State == System.Data.ConnectionState.Open)
+                    {
+                        connection.Close();
+                    }
+                }
+            }
+        }
+
+        public List<Object> consultarDetalleEtiquetas(string NoParte)
+        {
+            var listaDetalleEtq = new List<Object>();
+            using (SqlConnection connection = new SqlConnection(cnP))
+            {
+                try
+                {
+                    connection.Open();
+                    string query = "SELECT NoParte, NoEtiqueta, Estado FROM CAT_ETIQS_PLASTICAS WHERE No Parte = @NoParte ORDER BY NoEtiqueta";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add("@NoParte", SqlDbType.VarChar).Value = NoParte;
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                listaDetalleEtq.Add(new
+                                {
+                                    NoParte = reader["NoParte"].ToString(),
+                                    NoEtiqueta = reader["NoEtiqueta"].ToString(),
+                                    Estado = Convert.ToInt32(reader["Estado"])
+                                });
+                            }
+                        }
+                    }
+                    return listaDetalleEtq;
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+                finally
+                {
+                    if (connection.State == System.Data.ConnectionState.Open)
+                    {
+                        connection.Close();
+                    }
+                }
+            }
+        }
+
     }
 }

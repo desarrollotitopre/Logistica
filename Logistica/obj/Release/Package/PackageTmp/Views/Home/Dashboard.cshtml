@@ -1,0 +1,56 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="pagetitle">
+    <h1>Dashboard</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Tarjeta 1 -->
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="card shadow-sm h-100" style="border-left: 4px solid #730b15;">
+                <div class="card-body text-center">
+                    <i class="fas fa-clipboard-list fa-2x mb-3" style="color: #730b15;"></i>
+                    <h5 class="card-title">Transportes</h5>
+                    <p class="card-text text-muted">Visualiza en tiempo real es estado de las unidades.</p>
+                    <a href="@Url.Action("Dashboard", "Transportes")" class="btn btn-sm" style="background: #730b15; color: white;">Ir</a>
+                </div>
+            </div>
+        </div>
+        <!-- Tarjeta 2 -->
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+            <div class="card shadow-sm h-100" style="border-left: 4px solid #34495e;">
+                <div class="card-body text-center">
+                    <i class="fas fa-warehouse fa-2x mb-3" style="color: #34495e;"></i>
+                    <h5 class="card-title"  style="color: #34495e;">Tier 2</h5>
+                    <p class="card-text text-muted">Carga rapidamente el plan de etiquetas.</p>
+                    <a href="@Url.Action("PlanEtiquetas", "Tier2")" class="btn btn-sm" style="background: #34495e; color: white;">Ir</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card:hover {
+            transform: scale(1.08);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+    .btn-purple:hover {
+        background-color: #732d91;
+    }
+</style>

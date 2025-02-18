@@ -1,0 +1,506 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+
+
+<div class="pagetitle">
+    <h1>Control de Unidades</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Dashboard", "Home")">Home</a></li>
+            <li class="breadcrumb-item">Transportes</li>
+            <li class="breadcrumb-item active">Control de Unidades</li>
+        </ol>
+    </nav>
+</div>
+
+
+<section class="section">
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-boxes me-1"></i> TABLERO CONTROL DE UNIDADES
+                </div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <div id="legend">
+                            <div class="legend-item-container">
+                                <div class="legend-color upload">Planeado</div>
+                            </div>
+                            <div class="legend-item-container">
+                                <div class="legend-color register">Registrado</div>
+                            </div>
+                            <div class="legend-item-container">
+                                <div class="legend-color assignedRamp">Asignación Rampa</div>
+                            </div>
+                            <div class="legend-item-container">
+                                <div class="legend-color rampEntrance">Entrada Rampa</div>
+                            </div>
+                            <div class="legend-item-container">
+                                <div class="legend-color rampExit">Salida Rampa</div>
+                            </div>
+                            <div class="legend-item-container">
+                                <div class="legend-color plantExit">Salida Planta</div>
+                            </div>
+                            <div class="legend-item-container">
+                                <div class="legend-color cancelled">Cancelado</div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                            <div class="form-floating input-group">
+                                <span class="input-group-text" style="cursor:pointer"><i class="fas fa-calendar-check"></i></span>
+                                <input type="text" class="form-control" id="fechaPlaneado" required>
+                                <label for="fechaPlaneado" style="margin-left: 2.5em; z-index:5">FECHA PLANEADO</label>
+                            </div>
+                        </div>
+
+
+                        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                            <div class="form-floating input-group">
+                                <span class="input-group-text" style="cursor:pointer"><i class="fas fa-sitemap"></i></span>
+                                <select class="form-select" id="area" aria-label="Stat" required>
+                                    <option value="GENERAL">GENERAL</option>
+                                    <option value="LOGISTICA">LOGISTICA</option>
+                                    <option value="INDIRECTOS">INDIRECTOS</option>
+                                    <option value="ROLLOS">ROLLOS</option>
+                                </select>
+                                <label style="margin-left: 2.5em; z-index:5" for="area">AREA</label>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                            <div class="form-floating input-group">
+                                <span class="input-group-text" style="cursor:pointer"><i class="fas fa-sitemap"></i></span>
+                                <select class="form-select" id="cliente" aria-label="Stat" required>
+                                </select>
+                                <label style="margin-left: 2.5em; z-index:5" for="cliente">CLIENTE</label>
+                            </div>
+                        </div>
+
+
+                        <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                            <div class="form-floating input-group">
+                                <span class="input-group-text" style="cursor:pointer"><i class="fas fa-calendar-check"></i></span>
+                                <input type="text" class="form-control" id="searchFolio" required>
+                                <label for="searchFolio" style="margin-left: 2.5em; z-index:5">BUSCAR FOLIO</label>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+
+
+                            <div class="table-container">
+                                <table id="tablePlan" class="table-custom" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="break-word">FOLIO</th>
+                                            <th class="break-word">ASN</th>
+                                            <th class="break-word">FECHA PLANEADA</th>
+                                            <th class="break-word">HR. LLEGADA PLANEADA</th>
+                                            <th class="break-word">HR. SALIDA PLANEADA</th>
+                                            <th class="break-word">PROVEEDOR</th>
+                                            <th class="break-word">AREA</th>
+                                            <th class="break-word">PROCESO</th>
+                                            @*<th class="break-word">PROV</th>*@
+                                            <th class="break-word">LINEA TRANS</th>
+                                            <th class="break-word">REGISTRO PLANTA</th>
+                                            <th class="break-word">RAMPA</th>
+                                            <th class="break-word">ENTRADA RAMPA</th>
+                                            <th class="break-word">SALIDA RAMPA</th>
+                                            <th class="break-word">SALIDA PLANTA</th>
+                                            <th class="break-word">ACCIONES</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div><!-- End floating Labels Form -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<div class="modal fade" id="statusModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img id="img_fotografia" src="~/assets/Imgs/registro.png" class="img-fluid" style="height:2.8em" alt=""><h5 class="modal-title" id="statusModalLabel"><i class="fas fa-file-alt"></i> Folio: <span id="modalFolio" class="fw-bold"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row form">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row g-3">
+
+                                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12" id="datosRampa" style="display:none;">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-calendar-check"></i></span>
+                                            <input type="text" class="form-control" id="rampaAsignado" required>
+                                            <label for="rampaAsignado" style="margin-left: 2.5em; z-index:5">Rampa</label>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btnCustom" id="nextStepBtn" onclick="validateRamp()">Siguiente Paso</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="statusModal2" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img id="img_fotografia" src="~/assets/Imgs/registro.png" class="img-fluid" style="height:2.8em" alt="">
+                <h5 class="modal-title" id="statusModalLabel"><i class="fas fa-file-alt"></i> Folio: <span id="modalFolio2" class="fw-bold"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row form">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-user"></i></span>
+                                            <input type="text" class="form-control" id="transportista" required>
+                                            <label for="transportista" style="margin-left: 2.5em; z-index:5">Nombre Transportista</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-building"></i></span>
+                                            <input type="text" class="form-control" id="empresa" required>
+                                            <label for="empresa" style="margin-left: 2.5em; z-index:5">Empresa</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-car"></i></span>
+                                            <input type="text" class="form-control" id="placas" required>
+                                            <label for="placas" style="margin-left: 2.5em; z-index:5">Placas</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-id-badge"></i></span>
+                                            <input type="text" class="form-control" id="gafete" required>
+                                            <label for="gafete" style="margin-left: 2.5em; z-index:5">N. Gafete</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-map-marker-alt"></i></span>
+                                            <input type="text" class="form-control" id="origen" required>
+                                            <label for="origen" style="margin-left: 2.5em; z-index:5">Origen / Destino de carga</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-box"></i></span>
+                                            <input type="text" class="form-control" id="contenedor" required>
+                                            <label for="contenedor" style="margin-left: 2.5em; z-index:5"># Caja / Contenedor</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-truck"></i></span>
+                                            <input type="text" class="form-control" id="tracto" required>
+                                            <label for="tracto" style="margin-left: 2.5em; z-index:5">Número de tracto</label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="reset" class="btn btn-outline-danger" data-bs-dismiss="modal"><i class="fas fa-eraser fa-lg"></i> CANCELAR</button>
+                <button class="btn btn-outline-success" id="nextStepBtn2" onclick="validateFormTrans()"><i class="bi bi-floppy"> ACEPTAR</i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="statusModal3" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img id="img_fotografia" src="~/assets/Imgs/registro.png" class="img-fluid" style="height:2.8em" alt="">
+                <h5 class="modal-title" id="statusModalLabel"><i class="fas fa-file-alt"></i> Folio: <span id="modalFolio3" class="fw-bold"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row form">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row g-3">
+
+
+                                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-user"></i></span>
+                                            <input type="text" class="form-control" id="transportistaR" readonly>
+                                            <label for="transportistaR" style="margin-left: 2.5em; z-index:5">Nombre Transportista</label>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-building"></i></span>
+                                            <input type="text" class="form-control" id="empresaR" readonly>
+                                            <label for="empresaR" style="margin-left: 2.5em; z-index:5">Empresa</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-car"></i></span>
+                                            <input type="text" class="form-control" id="placasR" readonly>
+                                            <label for="placasR" style="margin-left: 2.5em; z-index:5">Placas</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-id-badge"></i></span>
+                                            <input type="text" class="form-control" id="gafeteR" readonly>
+                                            <label for="gafeteR" style="margin-left: 2.5em; z-index:5">N. Gafete</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-map-marker-alt"></i></span>
+                                            <input type="text" class="form-control" id="origenR" readonly>
+                                            <label for="origenR" style="margin-left: 2.5em; z-index:5">Origen / Destino de carga</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-box"></i></span>
+                                            <input type="text" class="form-control" id="contenedorR" readonly>
+                                            <label for="contenedorR" style="margin-left: 2.5em; z-index:5"># Caja / Contenedor</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-truck"></i></span>
+                                            <input type="text" class="form-control" id="tractoR" readonly>
+                                            <label for="tractoR" style="margin-left: 2.5em; z-index:5">Número de tracto</label>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="modal fade" id="confirmActionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img id="img_fotografia" src="~/assets/Imgs/registro.png" class="img-fluid" style="height:2.8em" alt=""><h5 class="modal-title" id="titleModalConfirm">Confirmación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row form">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row g-3">
+
+                                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                                        <div class="modal-body text-center" id="Message">
+                                            ¿Estás seguro de que deseas actualizar el número de parte?
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="reset" class="btn btn-outline-danger" data-bs-dismiss="modal"><i class="fas fa-eraser fa-lg"></i> CANCELAR</button>
+                <button class="btn btn-outline-success" id="confirmBtn" onclick=""><i class="bi bi-floppy"> ACEPTAR</i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="getDetailFolio" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img id="img_fotografia" src="~/assets/Imgs/registro.png" class="img-fluid" style="height:2.8em" alt="">
+                <h5 class="modal-title" id="statusModalLabel"><i class="fas fa-file-alt"></i> Folio: <span id="titleModalInfoFolio" class="fw-bold"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row form">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row g-3">
+
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-calendar-alt"></i></span>
+                                            <input type="text" class="form-control" id="FPlan" required>
+                                            <label for="FPlan" style="margin-left: 2.5em; z-index:5">Fecha Planeada</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-file-invoice"></i></span>
+                                            <input type="text" class="form-control" id="ASN" required>
+                                            <label for="ASN" style="margin-left: 2.5em; z-index:5">ASN</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-road"></i></span>
+                                            <input type="text" class="form-control" id="LineaTrans" required>
+                                            <label for="LineaTrans" style="margin-left: 2.5em; z-index:5">Linea Transportista</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-truck-moving"></i></span>
+                                            <input type="text" class="form-control" id="Unidad" required>
+                                            <label for="Unidad" style="margin-left: 2.5em; z-index:5">Unidad</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-battery-half"></i></span>
+                                            <input type="text" class="form-control" id="Carga" required>
+                                            <label for="Carga" style="margin-left: 2.5em; z-index:5">% Cargar</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-clock"></i></span>
+                                            <input type="text" class="form-control" id="HrllegadaPlan" required>
+                                            <label for="HrllegadaPlan" style="margin-left: 2.5em; z-index:5">Hr LLegada Planeada</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-clock"></i></span>
+                                            <input type="text" class="form-control" id="HrSalidaPlan" required>
+                                            <label for="HrSalidaPlan" style="margin-left: 2.5em; z-index:5">Hr Salida Planeada</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-truck"></i></span>
+                                            <input type="text" class="form-control" id="Proveedor" required>
+                                            <label for="Proveedor" style="margin-left: 2.5em; z-index:5">Proveedor</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-tasks"></i></span>
+                                            <input type="text" class="form-control" id="Proyecto" required>
+                                            <label for="Proyecto" style="margin-left: 2.5em; z-index:5">Proyecto</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-cogs"></i></span>
+                                            <input type="text" class="form-control" id="Proceso" required>
+                                            <label for="Proceso" style="margin-left: 2.5em; z-index:5">Proceso</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-calendar-alt"></i></span>
+                                            <input type="text" class="form-control" id="FechaCarga" required readonly>
+                                            <label for="FechaCarga" style="margin-left: 2.5em; z-index:5">Fecha Cargado</label>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div id="buttonContainer">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="spinner" id="spinner">
+    <i class="fas fa-spinner fa-spin"></i>
+</div>
+
+
+@section Scripts {
+    <script>
+        var signoutUrl = "@Url.Action("SignOut", "Acceso")";
+        var VistasPermitidas = [@string.Join(", ", (Session["VistasPermitidas"] as List<int> ?? new List<int>()))];
+        const AutorizedBy = "@Session["Nombre_Completo"]";
+    </script>
+
+    <script src="~/assets/js/Transportes/Dashboard.js"></script>
+}

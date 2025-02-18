@@ -454,9 +454,11 @@
     <Compile Include="Clases\Conexion.cs" />
     <Compile Include="Clases\FechasSemana.cs" />
     <Compile Include="Clases\PlanEtiquetas.cs" />
+    <Compile Include="Clases\PlanPrensas.cs" />
     <Compile Include="Clases\PlanTransporte.cs" />
     <Compile Include="Clases\RegistroActualizacion.cs" />
     <Compile Include="Clases\RegistroPlanBD.cs" />
+    <Compile Include="Clases\ResumenPlan.cs" />
     <Compile Include="Clases\SessionExpireFilterAttribute.cs" />
     <Compile Include="Clases\Transportistas.cs" />
     <Compile Include="Clases\Users.cs" />
@@ -525,6 +527,10 @@
     <Content Include="assets\Imgs\sort_desc.png" />
     <Content Include="assets\Imgs\ver.png" />
     <Content Include="assets\js\main.js" />
+    <Content Include="assets\js\Tier2\PlanEtiquetas.js" />
+    <Content Include="assets\js\Tier2\ModificarPlan.js" />
+    <Content Include="assets\js\Tier2\ConsultarPlanes.js" />
+    <Content Include="assets\js\Tier2\CatalogoEtiquetas.js" />
     <Content Include="assets\js\Transportes\CargaPlan.js" />
     <Content Include="assets\js\Transportes\Dashboard.js" />
     <Content Include="assets\scss\Readme.txt" />
@@ -1049,6 +1055,8 @@
     <Content Include="Scripts\moment-with-locales.min.js.map" />
     <Content Include="Scripts\loadingoverlay.min.js.map" />
     <Content Include="Views\Shared\_AccesoDenegado.cshtml" />
+    <Content Include="Views\Tier2\CatalogoEtiquetas.cshtml" />
+    <Content Include="Views\Tier2\ConsultarPlanes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

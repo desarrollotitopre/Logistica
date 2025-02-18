@@ -1,0 +1,91 @@
+﻿@{
+    ViewBag.Title = "Almacen";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<style>
+
+
+    /* Fondo semitransparente */
+    .access-denied-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: #333;
+    }
+
+    /* Caja de mensaje de acceso denegado */
+    .access-denied-box {
+        background-color: #f9f9f9;
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+        font-family: Arial, sans-serif;
+    }
+
+    /* Icono de advertencia */
+    .icon-container {
+        color: #ff6b6b;
+        font-size: 3em;
+        margin-bottom: 15px;
+    }
+
+    /* Título */
+    .access-denied-box h2 {
+        font-size: 1.8em;
+        color: #333;
+        margin: 10px 0;
+        font-weight: 600;
+    }
+
+    /* Mensaje */
+    .access-denied-box p {
+        color: #555;
+        font-size: 1.1em;
+        margin: 10px 0 20px;
+        line-height: 1.4em;
+    }
+
+    /* Botón de retorno */
+    .return-button {
+        background-color: #ff6b6b;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .return-button:hover {
+            background-color: #e05656;
+        }
+
+        .return-button:focus {
+            outline: none;
+        }
+
+</style>
+
+
+<div class="access-denied-container">
+    <div class="access-denied-box">
+        <div class="icon-container">
+            <i class="fa fa-exclamation-triangle"></i>
+        </div>
+        <h2>Acceso Denegado</h2>
+        <p>No tienes permisos suficientes para acceder a esta página.</p>
+        <button onclick="history.back()" class="return-button">Volver</button>
+    </div>
+</div>
+
+<!-- Incluye la librería Font Awesome para los iconos si no la tienes aún -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">

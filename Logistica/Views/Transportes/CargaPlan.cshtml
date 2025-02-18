@@ -239,9 +239,8 @@
 @section scripts {
     <script>
         var signoutUrl = "@Url.Action("SignOut", "Acceso")";
-        var Tipo = @Session["Tipo"];
-        const AutorizedBy = "@Session["NombreUsuario"]";
-        var nombreUsuario = '@Session["NombreUsuario"]';
+        const AutorizedBy = "@Session["Nombre_Completo"]";
+        var nombreUsuario = '@Session["Nombre_Completo"]';
 
     </script>
 

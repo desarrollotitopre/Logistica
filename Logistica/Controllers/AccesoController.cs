@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -45,10 +46,9 @@ namespace Logistica.Controllers
             {
                 if (loginResult == 2)
                 {
-
                     TempData["loginResult"] = loginResult;
                     TempData["Nomina"] = Convert.ToInt32(Nomina);
-                    return RedirectToAction("resetPassword", "Acceso");
+                    return RedirectToAction("resetPassword", "AccessSystem");
                 }
                 else
                 {
@@ -59,30 +59,21 @@ namespace Logistica.Controllers
                     }
                     else
                     {
-                        string fullName = nombre + " " + apellidos;
-                        Users user = new Users();
+                        Users user = conexion.obtenerDatosUsuario(Convert.ToInt32(Nomina));
+                        //Session["IDDepartamentos"] = user.IDDepartamentos;
+                        // Usando JsonConvert si tienes Newtonsoft.Json
+                        Session["IDDepartamentos"] = JsonConvert.SerializeObject(user.IDDepartamentos);
 
-                        user = conexion.getTypeUser().Where(u => u.Nomina == Convert.ToInt32(Nomina)).FirstOrDefault();
+                        Session["Nomina"] = Convert.ToInt32(Nomina);
+                        Session["Nombre"] = nombre;
+                        Session["Apellidos"] = apellidos;
+                        Session["Nombre_Completo"] = nombre + " " + apellidos;
+                        Session["VistasPermitidas"] = user.VistasPermitidas;
+                        Session["PathPerfil"] = user.PathPerfil;
 
-                        if (user == null)
-                        {
-                            ViewBag.Error = "Falta asignar perfil";
-                            return View();
-                        }
-                        else
-                        {
-                            int tipo = user.Perfil;
-
-                            Session["NombreUsuario"] = fullName;
-                            Session["fullName"] = nombre + " " + apellidos;
-                            Session["nombre"] = nombre;
-                            Session["apellidos"] = apellidos;
-                            Session["Tipo"] = tipo;
-
-                            FormsAuthentication.SetAuthCookie(Nomina, false);
-                            ViewBag.Error = null;
-                            return RedirectToAction("Dashboard", "Home");
-                        }
+                        FormsAuthentication.SetAuthCookie(Nomina, false);
+                        ViewBag.Error = null;
+                        return RedirectToAction("Dashboard", "Home");
 
                     }
 
@@ -96,13 +87,11 @@ namespace Logistica.Controllers
             }
         }
 
-
         [HttpPost]
         public async Task<ActionResult> resetPassword(string Nomina)
         {
             Conexion conexion = new Conexion();
-            Users user = new Users();
-            user = conexion.getTypeUser().Where(u => u.Nomina == Convert.ToInt32(Nomina)).FirstOrDefault();
+            Users user = conexion.obtenerDatosUsuario(Convert.ToInt32(Nomina));
 
             if (user == null)
             {

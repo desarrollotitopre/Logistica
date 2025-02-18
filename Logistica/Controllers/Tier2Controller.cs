@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Logistica.Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -12,29 +13,22 @@ namespace Logistica.Controllers
 {
     public class Tier2Controller : Controller
     {
+
+        [AuthorizeModule(6, 7)]
         public ActionResult PlanEtiquetas()
         {
-            if (Session["Tipo"] != null)
-            {
-                return View();
-            }
-            else
-            {
-                return RedirectToAction("SignOut", "Acceso");
-            }
-        }
-        public ActionResult ModificarPlan()
-        {
-            if (Session["Tipo"] != null)
-            {
-                return View();
-            }
-            else
-            {
-                return RedirectToAction("SignOut", "Acceso");
-            }
+            return View();
+
         }
 
+        [AuthorizeModule(6, 7)]
+        public ActionResult ModificarPlan()
+        {
+            return View();
+
+        }
+
+        [AuthorizeModule(6, 7)]
         public bool IsSessionActive()
         {
             try
@@ -79,6 +73,8 @@ namespace Logistica.Controllers
                 return false; // Error al descifrar el ticket de autenticación
             }
         }
+
+        [AuthorizeModule(6, 7)]
         [HttpPost]
         public JsonResult consultarPlan(string proceso, string fecha)
         {
@@ -102,6 +98,7 @@ namespace Logistica.Controllers
             }
         }
 
+        [AuthorizeModule(6, 7)]
         public JsonResult actualizarPlan(string proceso, string fecha, List<RegistroActualizacion> registros)
         {
             try
@@ -116,8 +113,7 @@ namespace Logistica.Controllers
             }
         }
 
-
-
+        [AuthorizeModule(6, 7)]
         [HttpPost]
         public JsonResult datosPlanSemanal(List<PlanEtiquetas> datosXLSX, string nombreUsuario, FechasSemana fechasDias, string nombrePlan, string proceso)
         {
@@ -271,6 +267,7 @@ namespace Logistica.Controllers
             }
         }
 
+        [AuthorizeModule(6, 7)]
         [HttpPost]
         public JsonResult datosPlanSemanalPrensas(List<PlanEtiquetas> datosXLSX, string nombreUsuario, FechasSemana fechasDias, string nombrePlan, string proceso)
         {
@@ -434,6 +431,7 @@ namespace Logistica.Controllers
                 return Json(new { success = false, message = $"Error al procesar los datos: {ex.Message}" });
             }
         }
+        [AuthorizeModule(6, 7)]
         private RegistroPlanBD CrearRegistro(string linea, string nombrePlan, string noParte, string fecha, int cantidad, string usuario, bool esParcial, string proceso)
         {
             return new RegistroPlanBD
@@ -448,7 +446,7 @@ namespace Logistica.Controllers
                 Proceso = proceso
             };
         }
-
+        [AuthorizeModule(6, 7)]
         private RegistroPlanBD CrearRegistroPrensas(string linea, string nombrePlan, string noParte, string fecha, int cantidad, string usuario, bool esParcial, string proceso)
         {
             return new RegistroPlanBD

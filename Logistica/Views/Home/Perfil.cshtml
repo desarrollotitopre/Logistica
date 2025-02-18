@@ -36,7 +36,7 @@
           class="p-5 shadow-lg rounded bg-light form-container">
         <!-- Foto de Perfil -->
         <div class="text-center position-relative mb-3">
-            <img id="fotoPerfilPreview" src="@(string.IsNullOrEmpty(Session["PathPerfil"] as string) ? "http://192.168.40.240:8104/assets/Perfiles/usuario.png" : Session["PathPerfil"].ToString())" alt="Foto de Perfil"
+            <img id="fotoPerfilPreview" src="@(string.IsNullOrEmpty(Session["PathPerfil"] as string) ? "http://192.168.40.240:8104/assets/Perfiles/usuario.png" :  Session["PathPerfil"].ToString() == "N/A" ? "http://192.168.40.240:8104/assets/Perfiles/usuario.png" : Session["PathPerfil"].ToString())" alt="Foto de Perfil"
                  class="border shadow-sm profile-picture">
             <label for="nuevaFotoPerfil" class="position-absolute edit-icon">
                 <i class="fas fa-edit rounded-circle bg-white p-2 shadow"></i>
@@ -46,15 +46,22 @@
 
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
             <div class="form-floating input-group">
+                <span class="input-group-text" style="cursor:pointer"><i class="fas fa-file-invoice"></i></span>
+                <input type="number" class="form-control" id="Nombre" name="Nomina" value="@Session["Nomina"]" readonly>
+                <label for="Nomina" style="margin-left: 2.5em; z-index:5">Nomina</label>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 mt-2">
+            <div class="form-floating input-group">
                 <span class="input-group-text" style="cursor:pointer"><i class="fas fa-user"></i></span>
-                <input type="text" class="form-control" id="Nombre" name="Nombre" value="@Session["nombre"]" required>
+                <input type="text" class="form-control" id="Nombre" name="Nombre" value="@Session["Nombre"]" required>
                 <label for="Nombre" style="margin-left: 2.5em; z-index:5">Nombre</label>
             </div>
         </div>
         <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 mt-2">
             <div class="form-floating input-group">
                 <span class="input-group-text" style="cursor:pointer"><i class="fas fa-plus-circle"></i></span>
-                <input type="text" class="form-control" id="Apellidos" name="Apellidos" value="@Session["apellidos"]" required>
+                <input type="text" class="form-control" id="Apellidos" name="Apellidos" value="@Session["Apellidos"]" required>
                 <label for="Apellidos" style="margin-left: 2.5em; z-index:5">Apellidos</label>
             </div>
         </div>

@@ -411,7 +411,7 @@ namespace TruckyV2.Clases
                     SqlCommand cmd = new SqlCommand("Production.dbo.sp_Validar_Usuario", conn);
                     cmd.Parameters.AddWithValue("nomina", Nomina);
                     cmd.Parameters.AddWithValue("password", Password);
-                    cmd.Parameters.AddWithValue("idPlataforma", 5);
+                    cmd.Parameters.AddWithValue("idPlataforma", 36);
                     cmd.Parameters.Add("login", SqlDbType.Int).Direction = ParameterDirection.Output;
                     cmd.Parameters.Add("respuesta", SqlDbType.VarChar, 300).Direction = ParameterDirection.Output;
                     cmd.Parameters.Add("nombreUsuario", SqlDbType.VarChar, 150).Direction = ParameterDirection.Output;
@@ -435,40 +435,74 @@ namespace TruckyV2.Clases
                 Message = ex.Message;
             }
             return result;
-        }        
-        public List<Users> getTypeUser()
+        }
+
+        public Users obtenerDatosUsuario(int nomina)
         {
-            List<Users> listUsers = new List<Users>();
+            Users user = null;
+
             try
             {
-                using (SqlConnection oconexion = new SqlConnection(Conexion.cn))
+                using (var conn = new SqlConnection(Conexion.cnP))
                 {
-                    string query = $"SELECT * FROM TUsuarios";
+                    conn.Open();
 
-                    SqlCommand cmd = new SqlCommand(query, oconexion);
-                    cmd.CommandType = CommandType.Text;
-                    oconexion.Open();
-                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    // Query para traer todos los datos del usuario y los IDs de vistas permitidas en una sola consulta
+                    var query = @"
+                        SELECT 
+	                        US.Nomina, RP.Fotografia AS PathPerfil, US.IDDepartamento, 
+                            US.ModuloPerfilID
+                        FROM Usuarios AS US INNER JOIN ModuloPerfiles AS MP ON US.ModuloPerfilID = MP.ModuloPerfilID INNER JOIN RH..Reclutamiento_Personal AS RP ON US.Nomina =  RP.Nomina 
+                        WHERE US.Nomina = @Nomina";
+
+                    using (var cmd = new SqlCommand(query, conn))
                     {
-                        while (dr.Read())
+                        cmd.Parameters.AddWithValue("@Nomina", nomina);
+
+                        using (var dr = cmd.ExecuteReader())
                         {
-                            listUsers.Add(new Users()
+                            while (dr.Read())
                             {
-                                Nomina = Convert.ToInt32(dr["Nomina"]),
-                                Correo = dr["Correo"].ToString(),
-                                Perfil = Convert.ToInt32(dr["Perfil"]),
-                            });
+                                // Inicializar el usuario solo una vez
+                                if (user == null)
+                                {
+                                    user = new Users
+                                    {
+                                        Nomina = dr["Nomina"] == DBNull.Value ? 0 : Convert.ToInt32(dr["Nomina"]),
+                                        PathPerfil = dr["PathPerfil"] == DBNull.Value ? "" : dr["PathPerfil"].ToString(),
+                                    };
+                                }
+
+                                // Añadir los IDs de departamentos sin duplicar
+                                string idDepartamento = dr["IDDepartamento"] == DBNull.Value ? "" : dr["IDDepartamento"].ToString();
+                                if (!user.IDDepartamentos.Contains(idDepartamento))
+                                {
+                                    user.IDDepartamentos.Add(idDepartamento);
+                                }
+
+                                // Añadir los IDs de vistas permitidas sin duplicar
+                                int moduloPerfilID = dr["ModuloPerfilID"] == DBNull.Value ? 0 : Convert.ToInt32(dr["ModuloPerfilID"]);
+                                if (!user.VistasPermitidas.Contains(moduloPerfilID))
+                                {
+                                    user.VistasPermitidas.Add(moduloPerfilID);
+                                }
+                            }
                         }
                     }
                 }
             }
             catch
             {
-                listUsers = new List<Users>();
+                user = null; // Retorna null en caso de error
             }
 
-            return listUsers;
+            return user;
         }
+
+
+
+
+
         public int resetStepFolio(int Folio, int Tipo, string AutorizedBy, out string Message)
         {
             int result = 0;

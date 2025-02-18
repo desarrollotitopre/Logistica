@@ -102,7 +102,7 @@ function arraysEqual(a, b) {
 
 function updateTable(data) {
     //console.log(data);
-    if (Tipo === 4) {
+    if (VistasPermitidas.includes(4)) {
 
         data = data.filter(function (item) {
 
@@ -190,7 +190,7 @@ function updateTable(data) {
                     "data": "Status",
                     "render": function (data, type, row, meta) {
                         var buttons = '<div style="display: flex; align-items: center; justify-content: center; gap: 10px;">';
-                        if (Tipo === 1) {
+                        if (VistasPermitidas.includes(1)) {
 
                             if (data == 6) {
                                 buttons = buttons + '<button type="button" class="btnCustom btn-transport btn-Ver" title="Ver info del Folio" data-row-index="' + meta.row + '"><img src="/assets/Imgs/ver.png" alt="Truck Icon" class="truck-icon"></button>' +
@@ -216,16 +216,16 @@ function updateTable(data) {
 
                             return buttons;
 
-                        } else if (Tipo === 2 || Tipo === 3) {
+                        } else if (VistasPermitidas.includes(2) || VistasPermitidas.includes(3)) {
                             buttons = buttons + '<button type="button" class="btnCustom btn-transport btn-Ver" title="Ver info del Folio" data-row-index="' + meta.row + '"><img src="/assets/Imgs/ver.png" alt="Truck Icon" class="truck-icon"></button>';
                             if (data != 0 && data != 6) {
 
                                 buttons = buttons + '<button type="button" class="btnCustom btn-transport btn-Transportista" title="Ver info del Transportista" data-row-index="' + meta.row + '"<img src="/assets/Imgs/camion.png" alt="Truck Icon" class="truck-icon"></button>';
-                                if ((data != 2 && data != 3 && data != 4) && Tipo === 3) {
+                                if ((data != 2 && data != 3 && data != 4) && VistasPermitidas.includes(3)) {
                                     buttons = buttons + '<button type="button" class="btnCustom btn-transport btn-Regresar" title="Regresar estatus anterior" data-row-index="' + meta.row + '"><img src="/assets/Imgs/regresar.png" alt="Truck Icon" class="truck-icon"></button>';
                                 }
 
-                                if ((data != 1 && data != 5) && Tipo === 2) {
+                                if ((data != 1 && data != 5) && VistasPermitidas.includes(2)) {
                                     buttons = buttons + '<button type="button" class="btnCustom btn-transport btn-Regresar" title="Regresar estatus anterior" data-row-index="' + meta.row + '"><img src="/assets/Imgs/regresar.png" alt="Truck Icon" class="truck-icon"></button>';
                                 }
 
@@ -389,9 +389,7 @@ $('#tablePlan tbody').on('click', 'td:nth-child(1)', function () {
     $('#nextStepBtn').data('Folio', folio);
     $('#nextStepBtn').data('Status', status);
 
-    var tipoUsuario = Tipo;
-
-    if (Tipo === 4) {
+    if (VistasPermitidas.includes(4)) {
         toastr.warning("Solo tiene permisos de lectura");
         return;
     }
@@ -404,8 +402,8 @@ $('#tablePlan tbody').on('click', 'td:nth-child(1)', function () {
         toastr.error("El folio " + folio + " ha sido marcado como cancelado");
         return;
     } else {
-        if (tipoUsuario == 1 || tipoUsuario == 2) {
-            if (status == 0 && tipoUsuario == 1) {
+        if (VistasPermitidas.includes(1) || VistasPermitidas.includes(2)) {
+            if (status == 0 && VistasPermitidas.includes(1)) {
                 $('#nextStepBtn2').data('Folio', folio);
                 $('#nextStepBtn2').data('Status', status);
                 $('#nextStepBtn2').text(nextStepLabel);
@@ -413,7 +411,7 @@ $('#tablePlan tbody').on('click', 'td:nth-child(1)', function () {
                 $('#modalFolio2').text(folio);
                 $('#statusModal2').modal('show');
             } else {
-                if ((status == 0 || status == 2 || status == 4) && tipoUsuario == 2) {
+                if ((status == 0 || status == 2 || status == 4) && VistasPermitidas.includes(2)) {
                     toastr.warning("Solo tiene permisos para asignar y registrar salidas de rampa");
                 } else {
                     $('#statusModal').modal('show');
@@ -421,7 +419,7 @@ $('#tablePlan tbody').on('click', 'td:nth-child(1)', function () {
             }
 
         } else {
-            if (tipoUsuario == 3) {
+            if (VistasPermitidas.includes(3)) {
                 if (status == 0 || status == 2 || status == 4) {
                     if (status == 0) {
                         $('#nextStepBtn2').data('Folio', folio);

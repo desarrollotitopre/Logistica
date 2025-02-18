@@ -54,13 +54,13 @@
                 <li class="nav-item dropdown pe-3">
 
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                        <img src="@(string.IsNullOrEmpty(Session["PathPerfil"] as string) ? "http://192.168.40.240:8104/assets/Perfiles/usuario.png" : Session["PathPerfil"].ToString())" alt="Profile" class="rounded-circle profile-img">
+                        <img src="@(string.IsNullOrEmpty(Session["PathPerfil"] as string) ? "http://192.168.40.240:8104/assets/Perfiles/usuario.png" : Session["PathPerfil"].ToString() == "N/A" ? "http://192.168.40.240:8104/assets/Perfiles/usuario.png": Session["PathPerfil"].ToString())" alt="Profile" class="rounded-circle profile-img">
 
 
                         <span class="d-none d-md-block dropdown-toggle ps-2">
                             @if (User.Identity.IsAuthenticated)
                             {
-                                <span>@Session["nombre"]</span>
+                                <span>@Session["Nombre"]</span>
                             }
                             else
                             {
@@ -74,7 +74,7 @@
                             <h6>
                                 @if (User.Identity.IsAuthenticated)
                                 {
-                                    <span>@Session["fullname"]</span>
+                                    <span>@Session["Nombre_Completo"]</span>
                                 }
                                 else
                                 {
@@ -125,6 +125,7 @@
     <aside id="sidebar" class="sidebar">
 
         <ul class="sidebar-nav" id="sidebar-nav">
+
             <li class="nav-item">
                 <a class="nav-link " href="@Url.Action("Dashboard", "Home")">
                     <i class="fas fa-home"></i>
@@ -132,40 +133,72 @@
                 </a>
             </li><!-- End Dashboard Nav -->
 
-            <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#forms-nav-transportes" data-bs-toggle="collapse" href="#">
-                    <i class="fas fa-truck-moving"></i><span> Transportes</span><i class="fas fa-chevron-down ms-auto"></i>
-                </a>
-                <ul id="forms-nav-transportes" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                    <li>
-                        <a href="@Url.Action("Dashboard", "Transportes")" style="cursor:pointer">
-                            <i class="fas fa-angle-right"></i><span> Control de  Unidades</span>
+            @{
+                var perfil = Session["VistasPermitidas"] as List<int> ?? new List<int>();
+                if (perfil != null && (perfil.Contains(1) || perfil.Contains(2) || perfil.Contains(3) || perfil.Contains(4) || perfil.Contains(5)))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" data-bs-target="#forms-nav-transportes" data-bs-toggle="collapse" href="#">
+                            <i class="fas fa-truck-moving"></i><span> Transportes</span><i class="fas fa-chevron-down ms-auto"></i>
                         </a>
-                    </li>
-                    <li>
-                        <a href="@Url.Action("CargaPlan", "Transportes")" style="cursor:pointer">
-                            <i class="fas fa-angle-right"></i><span> Carga Plan</span>
+                        <ul id="forms-nav-transportes" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+
+                            @{
+                                <li>
+                                    <a href="@Url.Action("Dashboard", "Transportes")" style="cursor:pointer">
+                                        <i class="fas fa-angle-right"></i><span> Control de  Unidades</span>
+                                    </a>
+
+                                </li>
+
+                                if (perfil != null && (perfil.Contains(1) || perfil.Contains(2)))
+                                {
+
+                                    <li>
+                                        <a href="@Url.Action("CargaPlan", "Transportes")" style="cursor:pointer">
+                                            <i class="fas fa-angle-right"></i><span> Carga Plan</span>
+                                        </a>
+                                    </li>
+
+                                }
+
+                            }
+
+                        </ul>
+                    </li><!-- End Forms Nav -->
+                }
+
+                if (perfil != null && (perfil.Contains(6) || perfil.Contains(7)))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" data-bs-target="#forms-nav-transportes" data-bs-toggle="collapse" href="#">
+                            <i class="fas fa-truck-moving"></i><span> Transportes</span><i class="fas fa-chevron-down ms-auto"></i>
                         </a>
-                    </li>
-                </ul>
-            </li><!-- End Forms Nav -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#forms-nav-tier2" data-bs-toggle="collapse" href="#">
-                    <i class="fas fa-warehouse"></i><span> Tier 2</span><i class="fas fa-chevron-down ms-auto"></i>
-                </a>
-                <ul id="forms-nav-tier2" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                    <li>
-                        <a href="@Url.Action("PlanEtiquetas", "Tier2")" style="cursor:pointer">
-                            <i class="fas fa-angle-right"></i><span> Plan Etiquetas</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="@Url.Action("ModificarPlan", "Tier2")" style="cursor:pointer">
-                            <i class="fas fa-angle-right"></i><span> Modificar Plan</span>
-                        </a>
-                    </li>
-                </ul>
-            </li><!-- End Forms Nav -->
+                        <ul id="forms-nav-transportes" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link collapsed" data-bs-target="#forms-nav-tier2" data-bs-toggle="collapse" href="#">
+                                    <i class="fas fa-warehouse"></i><span> Tier 2</span><i class="fas fa-chevron-down ms-auto"></i>
+                                </a>
+                                <ul id="forms-nav-tier2" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                                    <li>
+                                        <a href="@Url.Action("PlanEtiquetas", "Tier2")" style="cursor:pointer">
+                                            <i class="fas fa-angle-right"></i><span> Plan Etiquetas</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("ModificarPlan", "Tier2")" style="cursor:pointer">
+                                            <i class="fas fa-angle-right"></i><span> Modificar Plan</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li><!-- End Forms Nav -->
+                        </ul>
+                    </li><!-- End Forms Nav -->
+                }
+
+            }
+
+
         </ul>
 
     </aside><!-- End Sidebar-->

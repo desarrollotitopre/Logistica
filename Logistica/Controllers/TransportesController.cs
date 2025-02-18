@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Logistica.Models;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -11,37 +12,24 @@ namespace Logistica.Controllers
 {
     public class TransportesController : Controller
     {
+        [AuthorizeModule(1, 2, 3, 4, 5)]
         public ActionResult Dashboard()
         {
             return View();
-
-            //if (Session["Tipo"] != null)
-            //{
-            //    return View();
-            //}
-            //else
-            //{
-            //    return RedirectToAction("SignOut", "AccessSystem");
-            //}
         }
+        [AuthorizeModule(1, 2, 3, 4, 5)]
         public ActionResult CargaPlan()
         {
             return View();
-
-            //if (Session["Tipo"] != null)
-            //{
-            //    return View();
-            //}
-            //else
-            //{
-            //    return RedirectToAction("SignOut", "AccessSystem");
-            //}
         }
+        [AuthorizeModule(1, 2, 3, 4, 5)]
+
         public ActionResult gestionFolio()
         {
             return View();
         }
 
+        [AuthorizeModule(1, 2, 3, 4, 5)]
         public bool IsSessionActive()
         {
             try
@@ -87,7 +75,7 @@ namespace Logistica.Controllers
             }
         }
 
-
+        [AuthorizeModule(1, 2, 3, 4, 5)]
         [HttpPost]
         public JsonResult getTablePlan(string dateFind)
         {
@@ -100,6 +88,8 @@ namespace Logistica.Controllers
 
             return Json(new { data = listPlanLog, SessionActive = true }, JsonRequestBehavior.AllowGet);
         }
+
+        [AuthorizeModule(1, 2, 3, 4, 5)]
         [HttpPost]
         public JsonResult getDetailFolio(int Folio)
         {
@@ -108,6 +98,8 @@ namespace Logistica.Controllers
 
             return Json(new { data = getDetailFolio }, JsonRequestBehavior.AllowGet);
         }
+
+        [AuthorizeModule(1, 2, 3, 4, 5)]
         [HttpPost]
         public JsonResult getDataTransportista(int Folio)
         {
@@ -116,6 +108,8 @@ namespace Logistica.Controllers
 
             return Json(new { data = listPlanLog }, JsonRequestBehavior.AllowGet);
         }
+
+        [AuthorizeModule(1, 2, 3, 4, 5)]
         [HttpPost]
         public JsonResult changeStatusPlan(int Folio, int Status, string Rampa, string AutorizedBy)
         {
@@ -124,6 +118,8 @@ namespace Logistica.Controllers
             return Json(new { result = result }, JsonRequestBehavior.AllowGet);
 
         }
+
+        [AuthorizeModule(1, 2, 3, 4, 5)]
         [HttpPost]
         public JsonResult inserDataRegsProvsT2(int Folio, string AutorizedBy, string transportista, string Empresa, string placas, string origen, string gafete, string contenedor, string tracto)
         {
@@ -133,6 +129,7 @@ namespace Logistica.Controllers
 
         }
 
+        [AuthorizeModule(1, 2, 3, 4, 5)]
         [HttpPost]
         public JsonResult InsertarDatosCSV(List<string[]> datosCSV, string nombreUsuario)
         {
@@ -178,6 +175,7 @@ namespace Logistica.Controllers
             //return Json(new { result = result });
         }
 
+        [AuthorizeModule(1, 2, 3, 4, 5)]
         [HttpPost]
         public JsonResult cancelFolio(int Folio, string AutorizedBy)
         {
@@ -186,6 +184,7 @@ namespace Logistica.Controllers
             return Json(new { result = result }, JsonRequestBehavior.AllowGet);
         }
 
+        [AuthorizeModule(1, 2, 3, 4, 5)]
         [HttpPost]
         public JsonResult resetFullFolio(int Folio, string AutorizedBy)
         {
@@ -196,6 +195,7 @@ namespace Logistica.Controllers
 
         }
 
+        [AuthorizeModule(1, 2, 3, 4, 5)]
         [HttpPost]
         public JsonResult resetStepFolio(int Folio, int Tipo, string AutorizedBy)
         {
@@ -206,7 +206,7 @@ namespace Logistica.Controllers
             return Json(new { result = result, Message = Message }, JsonRequestBehavior.AllowGet);
         }
 
-
+        [AuthorizeModule(1, 2, 3, 4, 5)]
         [HttpPost]
         public JsonResult updateFolio(int Folio, string AutorizedBy, string FechaPlan, string HrLlegadaPlan, string HrSalidaPlan, string Proveedor, string Proyecto, string Unidad, string Carga, string LineaTrans, string ASN)
         {
@@ -217,10 +217,7 @@ namespace Logistica.Controllers
 
         }
 
-
-
-
-
+        [AuthorizeModule(1, 2, 3, 4, 5)]
         [HttpPost]
         public JsonResult getFilterCustomers(string dateFind)
         {

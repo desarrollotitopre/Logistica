@@ -500,6 +500,9 @@
         var signoutUrl = "@Url.Action("SignOut", "Acceso")";
         var VistasPermitidas = [@string.Join(", ", (Session["VistasPermitidas"] as List<int> ?? new List<int>()))];
         const AutorizedBy = "@Session["Nombre_Completo"]";
+        // Vartiable tipo para SP sp_ResetMovsFolio
+        var Tipo = VistasPermitidas.length > 0 ? Math.min(VistasPermitidas[0], 5) : 1;
+
     </script>
 
     <script src="~/assets/js/Transportes/Dashboard.js"></script>

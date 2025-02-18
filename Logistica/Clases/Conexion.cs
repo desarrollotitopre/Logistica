@@ -452,7 +452,7 @@ namespace TruckyV2.Clases
                         SELECT 
 	                        US.Nomina, RP.Fotografia AS PathPerfil, US.IDDepartamento, 
                             US.ModuloPerfilID
-                        FROM Usuarios AS US INNER JOIN ModuloPerfiles AS MP ON US.ModuloPerfilID = MP.ModuloPerfilID INNER JOIN RH..Reclutamiento_Personal AS RP ON US.Nomina =  RP.Nomina 
+                        FROM Usuarios AS US INNER JOIN RH..Reclutamiento_Personal AS RP ON US.Nomina =  RP.Nomina 
                         WHERE US.Nomina = @Nomina";
 
                     using (var cmd = new SqlCommand(query, conn))
@@ -915,7 +915,7 @@ namespace TruckyV2.Clases
                                     NoParte = reader["NoParte"].ToString(),
                                     CantidadEtiquetas = (reader.IsDBNull(reader.GetOrdinal("CantidadEtiquetas")) ? 0 : reader.GetInt32(reader.GetOrdinal("CantidadEtiquetas"))).ToString(),
                                     EtiquetasParciales = (reader.IsDBNull(reader.GetOrdinal("CantidadParcial")) ? 0 : reader.GetInt32(reader.GetOrdinal("CantidadParcial"))).ToString(),
-                                    UsuarioRecibio = reader["UsuarioConfirmado"].ToString(),
+                                    UsuarioRecibio = reader["UsuarioRecibio"].ToString(),
                                     FechaEntrega = reader["FechaEntrega"].ToString()
                                 };
                                 resumen.Add(registro);

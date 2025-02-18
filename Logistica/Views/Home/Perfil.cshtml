@@ -1,0 +1,214 @@
+﻿
+@{
+    ViewBag.Title = "Perfil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="pagetitle">
+    <h1>Perfil</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Dashboard", "Home")" class="text-decoration-none text-secondary">Perfil</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Editar perfil</li>
+        </ol>
+    </nav>
+</div>
+
+<!-- Incluir jQuery -->
+<script src="~/Scripts/jquery-3.7.1.min.js"></script>
+
+
+<!-- Mostrar el mensaje del resultado (si existe) -->
+@{
+    var message = TempData["Message"] as string;
+    if (!string.IsNullOrEmpty(message))
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            @message
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+}
+
+<div class="container d-flex justify-content-center">
+    <form method="post" action="@Url.Action("ActualizarPerfil", "Home")" enctype="multipart/form-data"
+          class="p-5 shadow-lg rounded bg-light form-container">
+        <!-- Foto de Perfil -->
+        <div class="text-center position-relative mb-3">
+            <img id="fotoPerfilPreview" src="@(string.IsNullOrEmpty(Session["PathPerfil"] as string) ? "http://192.168.40.240:8104/assets/Perfiles/usuario.png" : Session["PathPerfil"].ToString())" alt="Foto de Perfil"
+                 class="border shadow-sm profile-picture">
+            <label for="nuevaFotoPerfil" class="position-absolute edit-icon">
+                <i class="fas fa-edit rounded-circle bg-white p-2 shadow"></i>
+            </label>
+            <input type="file" name="nuevaFotoPerfil" accept="image/*" class="d-none" id="nuevaFotoPerfil">
+        </div>
+
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+            <div class="form-floating input-group">
+                <span class="input-group-text" style="cursor:pointer"><i class="fas fa-user"></i></span>
+                <input type="text" class="form-control" id="Nombre" name="Nombre" value="@Session["nombre"]" required>
+                <label for="Nombre" style="margin-left: 2.5em; z-index:5">Nombre</label>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 mt-2">
+            <div class="form-floating input-group">
+                <span class="input-group-text" style="cursor:pointer"><i class="fas fa-plus-circle"></i></span>
+                <input type="text" class="form-control" id="Apellidos" name="Apellidos" value="@Session["apellidos"]" required>
+                <label for="Apellidos" style="margin-left: 2.5em; z-index:5">Apellidos</label>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <button type="submit" class="btn custom-btn" style="width:100%;"><i class="fas fa-save me-2"></i> ACTUALIZAR DATOS</button>
+        </div>
+    </form>
+</div>
+
+
+<!-- Modal para recortar la imagen -->
+<div class="modal fade" id="cropperModal" tabindex="-1" aria-labelledby="cropperModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cropperModalLabel">Recortar foto de perfil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-center">
+                    <img id="imageToCrop" src="" class="img-fluid" alt="Imagen para recortar">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal"><i class="fas fa-eraser fa-lg"></i> CANCELAR</button>
+                <button type="button" id="cropImageButton" class="btn btn-outline-dark"><i class="fas fa-cut me-2"></i> RECORTAR</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+
+        let cropper;
+        const nuevaFotoInput = document.getElementById('nuevaFotoPerfil');
+        const imageToCrop = document.getElementById('imageToCrop');
+        const cropperModal = new bootstrap.Modal(document.getElementById('cropperModal'));
+
+       
+
+
+        nuevaFotoInput.addEventListener('change', function () {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imageToCrop.src = e.target.result;
+                    cropperModal.show();
+
+                    if (cropper) {
+                        cropper.destroy();
+                        console.log("cropper.destroy()");
+                    }
+
+                    cropper = new Cropper(imageToCrop, {
+                        aspectRatio: 1,
+                        viewMode: 2,
+                    });
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        document.getElementById('cropImageButton').addEventListener('click', function () {
+            if (cropper) {
+                const canvas = cropper.getCroppedCanvas({
+                    width: 300,
+                    height: 300,
+                    imageSmoothingQuality: 'high'
+                });
+                //// Actualiza la vista previa con la imagen recortada
+                canvas.toBlob(function (blob) {
+                    const url = URL.createObjectURL(blob);
+                    $('#fotoPerfilPreview').attr('src', url);
+
+                    // Opcional: Si necesitas enviar la imagen recortada al servidor
+                    const fileInput = document.getElementById('nuevaFotoPerfil');
+                    const newFile = new File([blob], fileInput.files[0].name, { type: blob.type });
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(newFile);
+                    fileInput.files = dataTransfer.files;
+
+                }, 'image/jpeg', 0.95);
+
+                cropper.destroy();
+                cropper = null;
+                cropperModal.hide();
+
+            }
+        });
+
+
+        $('form').on('submit', function (e) {
+
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'PathPerfilOld', // Nombre del nuevo campo
+                value: '@Session["PathPerfil"]'// Valor del nuevo campo
+            }).appendTo(this);
+        });
+
+        // Ocultar el mensaje automáticamente después de 5 segundos (5000 ms)
+        setTimeout(function () {
+            $('.alert').fadeOut('slow', function () {
+                $(this).remove(); // Eliminar el elemento después de que se desvanezca
+            });
+        }, 2000);
+
+
+    });
+
+</script>
+
+<style>
+    .profile-picture {
+        width: 150px;
+        height: 150px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+
+    .edit-icon {
+        bottom: 0;
+        right: 0;
+        cursor: pointer;
+    }
+
+    #imageToCrop {
+        max-width: 50%;
+        height: auto;
+    }
+
+    .custom-btn {
+        color: #730b15; /* Texto del color inicial */
+        border: 2px solid #730b15; /* Línea del color inicial */
+        background-color: transparent; /* Fondo transparente */
+        height: 50px; /* Altura personalizada */
+        font-size: 15px; /* Tamaño del texto */
+        transition: all 0.3s ease; /* Animación suave */
+    }
+
+        .custom-btn:hover {
+            color: white; /* Texto blanco al hacer hover */
+            background-color: #730b15; /* Fondo del color completo */
+            border-color: #730b15; /* Mantener el borde del mismo color */
+        }
+
+    #signatureModal #signature-pad {
+        background-color: #fff;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+</style>

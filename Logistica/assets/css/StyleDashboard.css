@@ -1,0 +1,545 @@
+﻿
+.table-custom {
+    margin-top: 15px !important;
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    table-layout: auto;
+}
+
+    .table-custom th,
+    .table-custom td {
+        vertical-align: middle;
+        border-top: 1px solid #dee2e6;
+        text-align: center;
+        white-space: nowrap;
+        font-size: 11px; /* Tamaño de fuente más pequeño */
+        padding: 5px !important; /* Menor espacio de padding */
+        border: 0.5px solid #dee2e6;
+    }
+
+    .table-custom thead th {
+        vertical-align: middle;
+        border-bottom: 1px solid #dee2e6;
+        background-color: #730b15; /* Color de fondo más oscuro */
+        color: white;
+        padding: 2px !important;
+        font-size: 11px;
+    }
+
+    .table-custom tbody + tbody {
+        border-top: 2px solid #dee2e6;
+    }
+
+    .table-custom tbody tr {
+        transition: background-color 0.3s ease;
+    }
+
+        .table-custom tbody tr:hover {
+            background-color: #d1e9ff; /* Nuevo color de fondo en hover */
+        }
+
+    .table-custom .btn-column {
+        text-align: center;
+    }
+
+.break-word {
+    word-wrap: break-word;
+    white-space: normal;
+    width: 80px; /* Ajusta este valor según sea necesario */
+}
+
+.proveedor {
+    white-space: break-spaces !important;
+    width: 15%;
+}
+
+th.break-word {
+    overflow-wrap: break-word;
+    hyphens: auto;
+    word-wrap: break-word;
+    white-space: normal;
+    width: 50px; /* Ajusta este valor según sea necesario */
+}
+
+
+
+/* Estilo para el encabezado de la tabla */
+.card-header {
+    background-color: #730b15 !important;
+    background-size: cover; /* Ajustar la imagen al tamaño del elemento */
+    background-position: center; /* Centrar la imagen */
+    color: white;
+    border-bottom: none;
+    padding: 10px 20px;
+    border-radius: 5px 5px 0 0 !important;
+    font-size: 20px;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+
+.card-body {
+    padding: 20px;
+}
+
+#tablePlan_filter {
+    display: none;
+}
+
+
+/*.dataTables_filter input[type="search"] {
+    width: 300px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+*/
+
+#legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px; /* Añade un espacio entre los elementos */
+}
+
+.legend-item-container {
+    flex: 1 1 10%; /* Permite que cada elemento ocupe al menos el 30% del ancho disponible */
+    min-width: 150px; /* Define un ancho mínimo para evitar que los elementos se vuelvan demasiado pequeños */
+    margin-bottom: 10px;
+}
+
+.legend-color {
+    margin-bottom: 5px;
+    width: 100%; /* Cambia a 100% para que ocupe todo el ancho del contenedor */
+    height: 40px;
+    border-radius: 3px;
+    display: flex;
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+    font-weight: bold; /* Texto en negrita */
+}
+
+@media (max-width: 768px) {
+    .legend-item-container {
+        flex: 1 1 45%; /* Cambia el ancho mínimo a 45% en pantallas más pequeñas */
+    }
+}
+
+@media (max-width: 576px) {
+    .legend-item-container {
+        flex: 1 1 100%; /* Cada elemento ocupará el 100% del ancho en pantallas muy pequeñas */
+    }
+}
+
+
+/*#legend {
+    display: flex;
+    justify-content: space-between;
+}
+
+.legend-item-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.legend-color {
+    margin-bottom: 5px;
+    width: 170px;
+    height: 40px;
+
+    border-radius: 3px;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    font-weight: bold; 
+}
+*/
+tr.upload,
+#legend .legend-color.upload {
+    background-image: url('/assets/Imgs/BackgroundMain.jpg'); /* Ruta de la imagen de fondo */
+    color: white;
+}
+
+tr.register,
+#legend .legend-color.register {
+    background-color: #d3d3d3 !important;
+}
+
+tr.assignedRamp,
+#legend .legend-color.assignedRamp {
+    background-color: #c96e9f !important;
+    color: black;
+}
+
+tr.rampEntrance,
+#legend .legend-color.rampEntrance {
+    background-color: #0573b5 !important;
+    color: white;
+}
+
+tr.rampExit,
+#legend .legend-color.rampExit {
+    background-color: #F5B514 !important;
+    color: black;
+}
+
+tr.plantExit,
+#legend .legend-color.plantExit {
+    /* background-color: #75ae00 !important;*/
+    background-color: #1f8c1e !important;
+    color: white;
+}
+
+tr.cancelled,
+#legend .legend-color.cancelled {
+    background-color: #730b15 !important;
+    color: white;
+}
+
+.modal-header {
+    background-color: #730b15 !important;
+    background-size: cover;
+    background-position: center;
+    color: white;
+    text-align: center;
+}
+
+    .modal-header .modal-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        flex-grow: 1;
+        text-align: center;
+    }
+
+.btn-close-white {
+    border: none;
+    color: white;
+}
+
+    .btn-close-white:hover {
+        color: #ff0000;
+    }
+
+.button-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Espacio entre los botones */
+}
+
+.btnCustom {
+    border: none;
+    color: white;
+    width: 100%;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-top: 15px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+
+/* Estilos de la imagen */
+/* Contenedor de la imagen */
+.image-container {
+    width: auto;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex; /* Asegura que el contenido se centre */
+    align-items: center; /* Centra verticalmente */
+    justify-content: center; /* Centra horizontalmente */
+}
+
+    /* Imagen */
+    .image-container img {
+        max-height: 200px; /* Altura máxima de la imagen */
+        width: auto;
+        height: auto; /* Mantiene la proporción */
+        display: block; /* Elimina el espacio en línea */
+    }
+
+/* Estilos del formulario */
+.form-container {
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.form-row {
+    margin-bottom: 10px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+    .form-row input,
+    .form-row select,
+    .form-row button {
+        padding: 10px; /* Aumento del relleno */
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        transition: border-color 0.3s; /* Transición del borde */
+        width: 100%; /* Ancho del input al 100% */
+        margin-top: 5px; /* Espacio entre inputs */
+        font-family: sans-serif; /* Cambio de fuente a san serif */
+    }
+
+
+
+    .form-row label {
+        position: absolute;
+        top: 50%; /* Cambia la posición vertical al centro */
+        transform: translateY(-50%); /* Ajusta el label para que esté centrado verticalmente */
+        left: 10px;
+        transition: top 0.3s, left 0.3s, font-size 0.3s; /* Transición */
+        color: #777; /* Color del label */
+        pointer-events: none; /* Evita clics en el label */
+        z-index: 1; /* Asegurar que esté delante del input */
+    }
+
+
+    .form-row input:focus + label,
+    .form-row select:focus + label,
+    .form-row input:valid + label,
+    .form-row select:valid + label,
+    .form-row input.readonly + label {
+        top: 5px; /* Ajustar posición cuando se enfoca o tiene contenido */
+        left: 12px !important;
+        font-size: 12px; /* Tamaño de la fuente cuando se enfoca o tiene contenido */
+        color: #333; /* Color cuando se enfoca o tiene contenido */
+        background-color: #fff; /* Fondo para asegurar que el texto sea visible */
+        padding: 0 5px; /* Espacio para mejorar la apariencia */
+        border-radius: 3px; /* Bordes redondeados para mejorar la apariencia */
+    }
+
+
+/* Estilo para los campos solo de lectura */
+input[readonly] {
+    background-color: #f9f9f9; /* Cambia el color de fondo si es necesario */
+    cursor: not-allowed; /* Cambia el cursor para indicar que no es editable */
+}
+
+/* Nueva clase para manejar campos solo de lectura */
+input.readonly + label {
+    top: 5px; /* Ajustar posición cuando se enfoca o tiene contenido */
+    left: 12px !important;
+    font-size: 12px; /* Tamaño de la fuente cuando se enfoca o tiene contenido */
+    color: #333; /* Color cuando se enfoca o tiene contenido */
+    background-color: #fff; /* Fondo para asegurar que el texto sea visible */
+    padding: 0 5px; /* Espacio para mejorar la apariencia */
+    border-radius: 3px; /* Bordes redondeados para mejorar la apariencia */
+}
+
+.form-row input:first-child + label,
+.form-row input:first-child:valid + label {
+    left: 10px;
+}
+
+.form-row-group {
+    display: flex;
+    justify-content: space-between;
+}
+
+    .form-row-group .form-row:first-child input {
+        margin-right: 5px;
+    }
+
+select.form-control {
+    -webkit-appearance: none; /* Eliminar estilo por defecto en Safari */
+    -moz-appearance: none; /* Eliminar estilo por defecto en Firefox */
+    appearance: none; /* Eliminar estilo por defecto en otros navegadores */
+    background-color: white; /* Fondo blanco */
+    background-image: none; /* Sin imagen de fondo */
+    padding-right: 30px; /* Espacio para el icono de flecha */
+}
+
+.campo-invalido {
+    background-color: #FFCDD2 !important; /* Cambiar el color de fondo a rojo claro */
+}
+
+/* Iconos */
+.btn-icon {
+    margin-right: 5px;
+}
+
+
+.btnCancelar {
+    background-color: #730b15 !important; /* Color rojo obscuro */
+    color: white;
+    width: auto !important;
+    font-size: 14px !important;
+    border-color: #730b15 !important;
+    margin-bottom: 10px;
+}
+
+    .btnCancelar:hover {
+        background-color: #c82333 !important; /* Color rojo obscuro en hover */
+        border-color: #c82333 !important;
+    }
+
+.btnResetear {
+    background-color: #006f86 !important; /* Color rojo obscuro */
+    color: white;
+    width: auto !important;
+    font-size: 14px !important;
+    border-color: #006f86 !important;
+    margin-bottom: 10px;
+}
+
+    .btnResetear:hover {
+        background-color: #08a4bd !important; /* Color rojo obscuro en hover */
+        border-color: #08a4bd !important;
+    }
+
+.btnBack {
+    background-color: #0E3A7E !important; /* Color rojo obscuro */
+    color: white;
+    width: auto !important;
+    font-size: 14px !important;
+    border-color: #0E3A7E !important;
+    margin-bottom: 10px;
+}
+
+    .btnBack:hover {
+        background-color: #0809c0 !important; /* Color rojo obscuro en hover */
+        border-color: #0809c0 !important;
+    }
+
+.btnEditar {
+    background-color: #005d00; /* Color verde */
+    color: white;
+    width: auto !important;
+    font-size: 14px !important;
+    border-color: #005d00;
+    margin-bottom: 10px;
+}
+
+    .btnEditar:hover {
+        background-color: #1ea506; /* Color verde oscuro en hover */
+        border-color: #bd2130;
+    }
+
+
+
+/* Asegúrate de que tu imagen se ajuste adecuadamente */
+.truck-icon {
+    max-height: 25px;
+    display: block;
+    margin: 0 auto; /* Centrará la imagen dentro del botón */
+}
+
+.table-row-collapsed {
+    background-color: inherit; /* Hereda el color de fondo de la fila principal */
+}
+
+/* Asegúrate de que el botón esté centrado dentro de la celda */
+.btn-transport {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+
+/* Estilo personalizado para el encabezado del calendario */
+
+.ui-timepicker-div .ui-widget-header {
+    background-color: #730b15; /* Cambia este color según tus necesidades */
+    color: white;
+}
+
+
+.ui-datepicker-header {
+    background-color: #730b15;
+    color: white; /* Cambia el color del texto si es necesario para que se vea legible */
+    border: 1px solid #730b15; /* Puedes agregar un borde si lo deseas */
+}
+
+
+
+
+/* Estilos para el calendario Datepicker */
+.ui-datepicker {
+    font-size: 12px; /* Tamaño de fuente más pequeño */
+    width: 200px; /* Ancho del calendario */
+}
+
+/* Estilos para los encabezados de los días */
+.ui-datepicker-calendar th {
+    padding: 4px; /* Espaciado interno reducido */
+    text-align: center; /* Alineación centrada */
+}
+
+/* Estilos para los títulos de los meses */
+.ui-datepicker-title {
+    font-size: 12px; /* Tamaño de fuente más pequeño */
+    text-align: center; /* Alineación centrada */
+}
+
+/* Estilos para los botones del calendario (siguiente y anterior) */
+.ui-datepicker-header {
+    padding: 3px; /* Espaciado interno reducido */
+    text-align: center; /* Alineación centrada */
+}
+
+
+
+
+
+.ui-datepicker-prev span,
+.ui-datepicker-next span {
+    background-color: white; /* Color de fondo blanco */
+    border: none; /* Elimina cualquier borde */
+    color: blue; /* Cambia el color del texto si es necesario */
+    font-size: 12px; /* Tamaño de fuente */
+}
+
+    /* Puedes cambiar el color del texto de las flechas si es necesario */
+    .ui-datepicker-prev span:hover,
+    .ui-datepicker-next span:hover {
+        color: red; /* Por ejemplo, cambia el color a rojo cuando se pasa el ratón sobre las flechas */
+    }
+
+
+.spinner {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5); /* Fondo blanco semitransparente */
+    color: #000; /* Color negro para el ícono */
+    font-size: 8rem; /* Tamaño del ícono */
+    text-align: center; /* Alineación centrada */
+    line-height: 100vh; /* Centrado vertical */
+    animation: spin 3s linear infinite; /* Duración de la animación de 3 segundos */
+}
+
+
+.btnIcon {
+    align-items: center;
+    display: grid !important;
+    text-align: center;
+    justify-content: center;
+}

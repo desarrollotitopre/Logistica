@@ -1,0 +1,432 @@
+﻿
+@{
+    ViewBag.Title = "gestionFolio";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="mt-2">Folio</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="@Url.Action("Dashboard","Home")">Dashboard</a></li>
+    <li class="breadcrumb-item active">Gestion de Folio</li>
+</ol>
+
+
+
+
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-boxes me-1"></i>GESTION DE FOLIO
+    </div>
+    <div class="card-body">
+
+        <button type="button" id="" class="btnCustom btn-primary btnBack" onclick="abrirModalFolio(1);">
+            <i class="fas fa-times btn-icon"></i> REGRESAR STATUS
+        </button>
+
+        @{
+            bool cancelarFolio = false;
+            if (Session["Tipo"] != null && (int)Session["Tipo"] == 1)
+            {
+                cancelarFolio = true;
+            }
+        }
+
+        @if (cancelarFolio)
+        {
+            <button type="button" id="" class="btnCustom btn-primary btnResetear" onclick="abrirModalFolio(2);">
+                <i class="fas fa-redo btn-icon"></i> RESETEAR
+            </button>
+
+            <button type="button" id="" class="btnCustom btn-primary btnEditar" onclick="abrirModalgetDetailFolio();">
+                <i class="fas fa-pen btn-icon"></i> EDITAR
+            </button>
+
+            <button type="button" id="" class="btnCustom btn-primary btnCancelar" onclick="abrirModalFolio(3);">
+                <i class="fas fa-times btn-icon"></i> CANCELAR
+            </button>
+        }
+
+    </div>
+
+</div>
+
+
+<div class="modal fade" id="modalFolio" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="titleModal" class="modal-title"<i class="fas fa-file-alt"></i>RESETEAR FOLIO<span class="fw-bold"></span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <form class="form-container">
+                    <div class="form-row">
+                        <input type="number" id="folio" name="folio" required>
+                        <label for="folio">FOLIO</label>
+                    </div>
+                    <button type="button" id="btnChangeStatus" class="btnCustom btn-primary btnEditar">
+                        <i class="fas fa-redo btn-icon"></i> FOLIO
+                    </button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="getDetailFolio" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="statusModalLabel"><i class="fas fa-file-alt"></i> Folio: <span id="titleModalInfoFolio" class="fw-bold"></span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <form class="form-container">
+                    <div class="form-row-group">
+                        <div class="form-row" style="margin-right: 10px;">
+                            <input type="number" id="FolioS" name="FolioS" required>
+                            <label for="FolioS">Buscar Folio</label>
+                        </div>
+
+                        <div class="form-row" style="margin-right: 10px;">
+                            <input type="text" id="Proveedor" name="Proveedor" required>
+                            <label for="Proveedor">Proveedor</label>
+                        </div>
+                        <div class="form-row">
+                            <input type="text" id="Proyecto" name="Proyecto" required>
+                            <label for="Proyecto">Proyecto</label>
+                        </div>
+                    </div>
+                    <div class="form-row-group">
+                        <div class="form-row" style="margin-right: 10px;">
+                            <input type="text" id="FPlan" name="FPlan" required>
+                            <label for="FPlan">Fecha Planeado</label>
+                        </div>
+                        <div class="form-row" style="margin-right: 10px;">
+                            <input type="text" id="HrllegadaPlan" name="HrllegadaPlan" required>
+                            <label for="HrllegadaPlan">Hr LLegada Planeada</label>
+                        </div>
+                        <div class="form-row">
+                            <input type="text" id="HrSalidaPlan" name="HrSalidaPlan" required>
+                            <label for="HrSalidaPlan">Hr Salida Planeada</label>
+                        </div>
+                    </div>
+                    <div class="form-row-group">
+                        <div class="form-row" style="margin-right: 10px;">
+                            <input type="text" id="Unidad" name="Unidad" required>
+                            <label for="Unidad">Unidad</label>
+                        </div>
+                        <div class="form-row" style="margin-right: 10px;">
+                            <input type="text" id="Carga" name="Carga" style="margin-right: 10px;" required>
+                            <label for="Carga">% Carga</label>
+                        </div>
+                        <div class="form-row">
+                            <input type="text" id="LineaTrans" name="LineaTrans" required>
+                            <label for="LineaTrans">L. Transportista</label>
+                        </div>
+                    </div>
+                    <button type="button" class="btnCustom btn-primary btnEditar" id="actualizarFolio" onclick="validar();">ACTUALIZAR</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts {
+
+    <link href="~/styles/StyleDashboard.css" rel="stylesheet">
+
+    <script>
+
+        function abrirModalgetDetailFolio() {
+            $('#getDetailFolio').modal('show');
+
+            limpiarFormulario();
+        }
+
+
+        function abrirModalFolio(type) {
+            $('#modalFolio').modal('show');
+            var boton = document.getElementById("btnChangeStatus");
+            var modalTitle = document.getElementById("titleModal");
+            document.getElementById("folio").value = '';
+            if (type == 1) {
+                modalTitle.innerHTML = '<i class="fas fa-file-alt"></i> REGRESAR STATUS';
+                boton.innerHTML = '<i class="fas fa-redo btn-icon"></i> REGRESAR STATUS';
+                boton.setAttribute('onclick', 'validarFolio(1)');
+                boton.classList.add('btnBack');
+                boton.classList.remove('btnResetear');
+                boton.classList.remove('btnCancelar');
+
+            } else if (type == 2) {
+                modalTitle.innerHTML = '<i class="fas fa-file-alt"></i> RESETEAR FOLIO';
+                boton.innerHTML = '<i class="fas fa-redo btn-icon"></i> RESETEAR FOLIO';
+                boton.setAttribute('onclick', 'validarFolio(2)');
+                boton.classList.add('btnResetear');
+                boton.classList.remove('btnBack');
+                boton.classList.remove('btnCancelar');
+
+            } else {
+                modalTitle.innerHTML = '<i class="fas fa-file-alt"></i> CANCELAR FOLIO';
+                boton.innerHTML = '<i class="fas fa-times btn-icon"></i> CANCELAR FOLIO';
+                boton.setAttribute('onclick', 'validarFolio(3)');
+                boton.classList.add('btnCancelar');
+                boton.classList.remove('btnResetear');
+                boton.classList.remove('btnBack');
+
+            }
+        }
+
+        function validarFolio(type) {
+            console.log(type);
+            var folio = document.getElementById("folio").value.trim();
+            if (folio === "" || folio <= 0) {
+                toastr.warning("Por favor ingresa un folio valido");
+            } else {
+                if (type == 1) {
+                    resetearStepFolio();
+                } else if (type == 2) {
+                    resetearFullFolio();
+                } else {
+                    cancelarFolio();
+                }
+            }
+        }
+
+        function cancelarFolio() {
+
+            jQuery.ajax({
+                url: "@Url.Action("cancelFolio", "Home")",
+                type: "POST",
+                data: JSON.stringify({ Folio: $('#folio').val(), AutorizedBy: '@Session["NombreUsuario"]'}),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    if (data.result == true) {
+                        $('#folio').val("");
+                        toastr.success("Folio  "+ $('#folio').val() +" cancelado correctamente");
+                    } else {
+                        toastr.error("Error al cancelar el folio " + $('#folio').val());
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("Error al hacer la solicitud de cancelacion de folio: " + error);
+                }
+            });
+            $('#modalFolio').modal('hide');
+        }
+
+        function resetearFullFolio() {
+
+            jQuery.ajax({
+                url: "@Url.Action("resetFullFolio", "Home")",
+                type: "POST",
+                data: JSON.stringify({ Folio: $('#folio').val(), AutorizedBy: '@Session["NombreUsuario"]'}),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    if (data.result == true) {
+                        $('#folio').val("");
+                        toastr.success("Folio  "+ $('#folio').val() +" reseteado correctamente");
+                    } else {
+                        toastr.error("Error al resetar el folio " + $('#folio').val());
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("Error al hacer la solicitud de reseteo de folio: " + error);
+                }
+            });
+            $('#modalFolio').modal('hide');
+        }
+
+        function resetearStepFolio() {
+
+            jQuery.ajax({
+                url: "@Url.Action("resetStepFolio", "Home")",
+                type: "POST",
+                data: JSON.stringify({ Folio: $('#folio').val(), Tipo: @Session["Tipo"],AutorizedBy: '@Session["NombreUsuario"]'}),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    if (data.result > 0) {
+                        toastr.success(data.Message);
+                    } else {
+                        toastr.error('ERROR: ' + data.Message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("Error al hacer la solicitud de reseteo de folio: " + error);
+                }
+            });
+            $('#modalFolio').modal('hide');
+        }
+
+
+        document.getElementById('FolioS').addEventListener('input', function () {
+            var folio = this.value;
+            if (folio !== "") {
+                getDetailFolio(folio);
+            } else {
+                limpiarFormulario();
+            }
+
+        });
+
+        function getDetailFolio(folio) {
+            jQuery.ajax({
+                url: "@Url.Action("getDetailFolio", "Home")",
+                type: "POST",
+                data: JSON.stringify({ Folio: folio}),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    var detailFolio = data.data;
+                    if (detailFolio && detailFolio.length > 0) {
+                        detailFolio = data.data[0];
+
+                        $('#titleModalInfoFolio').text(folio);
+
+                        $('#FPlan').val(detailFolio.FechaPlan);
+                        $("#FPlan").datepicker({
+                            dateFormat: 'yy-mm-dd'
+                        }).datepicker('setDate', new Date());
+                        $('#HrllegadaPlan').val(detailFolio.HrLlegadaPlan);
+                        $('#HrSalidaPlan').val(detailFolio.HrSalidaPlan);
+                        $('#Proveedor').val(detailFolio.Proveedor);
+                        $('#Proyecto').val(detailFolio.Proyecto);
+                        $('#Unidad').val(detailFolio.Unidad);
+                        $('#Carga').val(detailFolio.Carga);
+                        $('#LineaTrans').val(detailFolio.LineaTrans);
+                        $('#actualizarFolio').data('Folio', folio);
+
+                    } else {
+                        limpiarFormulario();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("Error al hacer la solicitud de busqueda de folio: " + error);
+                }
+            });
+        }
+
+        function validar() {
+            // Objeto para almacenar los datos del formulario
+            var data = {};
+            data.Folio = $('#actualizarFolio').data('Folio');
+            data.AutorizedBy = '@Session["NombreUsuario"]';
+
+            var camposVacios = [];
+
+            function esValorValido(valor) {
+                return valor.trim() !== '';
+            }
+
+            var valorFPlan = $('#FPlan').val().trim();
+            if (esValorValido(valorFPlan)) {
+                data.FechaPlan = valorFPlan;
+            } else {
+                camposVacios.push('Fecha Plan');
+            }
+
+            var valorHrllegadaPlan = $('#HrllegadaPlan').val().trim();
+            if (esValorValido(valorHrllegadaPlan)) {
+                data.HrLlegadaPlan = valorHrllegadaPlan;
+            } else {
+                camposVacios.push('Hora Llegada Plan');
+            }
+
+            var valorHrSalidaPlan = $('#HrSalidaPlan').val().trim();
+            if (esValorValido(valorHrSalidaPlan)) {
+                data.HrSalidaPlan = valorHrSalidaPlan;
+            } else {
+                camposVacios.push('Hora Salida Plan');
+            }
+
+            var valorProveedor = $('#Proveedor').val().trim();
+            if (esValorValido(valorProveedor)) {
+                data.Proveedor = valorProveedor;
+            } else {
+                camposVacios.push('Proveedor');
+            }
+
+            var valorProyecto = $('#Proyecto').val().trim();
+            if (esValorValido(valorProyecto)) {
+                data.Proyecto = valorProyecto;
+            } else {
+                camposVacios.push('Proyecto');
+            }
+
+            var valorUnidad = $('#Unidad').val().trim();
+            if (esValorValido(valorUnidad)) {
+                data.Unidad = valorUnidad;
+            } else {
+                camposVacios.push('Unidad');
+            }
+
+            var valorCarga = $('#Carga').val().trim();
+            if (esValorValido(valorCarga)) {
+                data.Carga = valorCarga;
+            } else {
+                camposVacios.push('Carga');
+            }
+
+            var valorLineaTrans = $('#LineaTrans').val().trim();
+            if (esValorValido(valorLineaTrans)) {
+                data.LineaTrans = valorLineaTrans;
+            } else {
+                camposVacios.push('Línea Transporte');
+            }
+
+            if (camposVacios.length > 0) {
+                toastr.error('Los siguientes campos están vacíos: '+ camposVacios);
+            } else {
+                actualizarFolio(data)
+            }
+
+        }
+        function actualizarFolio(data) {
+            console.log(data);
+            var dtFolio = data.Folio;
+            jQuery.ajax({
+                url: "@Url.Action("updateFolio", "Home")",
+                type: "POST",
+                data: JSON.stringify(data),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+
+                    if (data.result == true) {
+                        $('#titleModalInfoFolio').val("");
+                        toastr.success("Datos del folio  " + dtFolio +" actualizados correctamente");
+                    } else {
+                        toastr.error("Error al actualizar los datos  del folio " + dtFolio);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("Error al hacer la solicitud de actualización de folio: " + error);
+                }
+            });
+            $('#getDetailFolio').modal('hide');
+        }
+
+
+
+        function limpiarFormulario() {
+            $('#FPlan').val("");
+            $('#HrllegadaPlan').val("");
+            $('#HrSalidaPlan').val("");
+            $('#Proveedor').val("").addClass('readonly').prop('readonly', true);
+            $('#Proyecto').val("").addClass('readonly').prop('readonly', true);
+            $('#Unidad').val("").addClass('readonly').prop('readonly', true);
+            $('#Carga').val("").addClass('readonly').prop('readonly', true);
+            $('#LineaTrans').val("").addClass('readonly').prop('readonly', true);
+        }
+
+    </script>
+}

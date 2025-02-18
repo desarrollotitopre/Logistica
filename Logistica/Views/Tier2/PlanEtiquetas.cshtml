@@ -1,0 +1,592 @@
+﻿
+@{
+    ViewBag.Title = "PlanEtiquetas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<div class="pagetitle">
+    <h1>Plan Etiquetas</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Dashboard", "Home")">Home</a></li>
+            <li class="breadcrumb-item">Tier 2</li>
+            <li class="breadcrumb-item active">Plan Etiquetas</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="container-fluid">
+
+
+    <!-- Main Card -->
+    <div class="card">
+        <!-- Card Header -->
+        <div class="card-header">
+            <i class="fas fa-boxes me-1"></i>
+            CARGAR PLAN DE ETIQUETAS XLSX
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+            <!-- Process Selection -->
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="proceso" class="form-label">ÁREA</label>
+                        <select class="form-control" id="proceso" name="proceso">
+                            <option value="ENSAMBLE">ENSAMBLE</option>
+                            <option value="PRENSAS">PRENSAS</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- File Upload Section -->
+            <div class="row mb-3">
+                <div class="col-12">
+                    <input type="file" id="excelFile" accept=".xlsx" class="d-none" />
+                    <div class="button-group">
+                        <button type="button" id="btnCargarXLSX" class="btnCustom btn-primary me-2"
+                                onclick="uploadExcel()">
+                            <i class="fas fa-file-excel btn-icon"></i> SELECCIONAR EXCEL
+                        </button>
+                        <span id="fileName" class="ms-2"></span>
+                        <button type="button" id="btnInsertar" class="btnCustom btn-primary"
+                                data-bs-toggle="modal" data-bs-target="#myModal"
+                                onclick="setValue()" style="display: none;">
+                            <i class="fas fa-check btn-icon"></i> CARGAR PLAN
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="spinner" class="text-center" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+
+            <!-- Error Container -->
+            <div id="errorContainer" class="alert alert-danger mt-3" style="display: none;"></div>
+
+            <!-- Data Table -->
+            <div class="table-responsive mt-3">
+                <table id="xlsxPreviewTable" class="table-custom" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th class="break-word">Linea</th>
+                            <th class="break-word">Numero de parte</th>
+                            <th class="break-word">Lunes</th>
+                            <th class="break-word">Martes</th>
+                            <th class="break-word">Miércoles</th>
+                            <th class="break-word">Jueves</th>
+                            <th class="break-word">Viernes</th>
+                            <th class="break-word">Sábado</th>
+                            <th class="break-word" id="domingoCol">Domingo</th>
+                            <th class="break-word" id="totalcount">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmar información</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Deseas confirmar el plan para <span id="spanProceso" class="fw-bold"></span>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="insertarDatos" class="btn btn-primary" data-bs-dismiss="modal" onclick="uploadExcelData()">
+                    Guardar cambios
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<link href="~/styles/StyleDashboard.css" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+
+
+<script>
+
+const state = {
+    dataTableInitialized: false,
+    fileName: "",
+    tableData: [],
+    fechasDias: {
+        fechaLunes: '',
+        fechaMartes: '',
+        fechaMiercoles: '',
+        fechaJueves: '',
+        fechaViernes: '',
+        fechaSabado: '',
+        fechaDomingo: ''
+    }
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeEventListeners();
+});
+
+function initializeEventListeners() {
+    const procesoSelect = document.getElementById("proceso");
+    procesoSelect.addEventListener('change', handleProcesoChange);
+
+    $('#xlsxPreviewTable th:nth-child(10)').css('background-color', '#000000');
+
+}
+
+function handleProcesoChange() {
+    limpiarTodo();
+    const procesoSelect = document.getElementById("proceso");
+    if (procesoSelect.value === 'PRENSAS') {
+        document.getElementById('domingoCol').style.display = 'none';
+    } else {
+        document.getElementById('domingoCol').style.display = '';
+    }
+}
+
+function setValue() {
+    const process = document.getElementById("proceso");
+    const value = process.options[process.selectedIndex].text;
+    document.getElementById("spanProceso").textContent = value;
+}
+
+function formatValue(value) {
+    if (typeof value === 'number' && !Number.isInteger(value)) {
+        const entero = Math.floor(value);
+        return { cantidad: entero, esParcial: true };
+    }
+    return { cantidad: value || 0, esParcial: false };
+    }
+
+function formatValuePrensas(value) {
+    if (typeof value === 'number' && !Number.isInteger(value)) {
+        const entero = Math.ceil(value);
+        return { cantidad: entero, esParcial: false };
+    }
+    return { cantidad: value || 0, esParcial: false };
+}
+
+function convertExcelDate(cell, format = 'short', dateFormat = 'ymd') {
+    try {
+        if (!cell || cell.v === undefined) return '';
+
+        const excelDate = cell.v;
+        if (typeof excelDate !== 'number') return '';
+
+        const jsDate = new Date((excelDate - 25568 - 1) * 86400 * 1000);
+        if (isNaN(jsDate.getTime())) return '';
+
+        const day = jsDate.getDate().toString().padStart(2, '0');
+        const month = (jsDate.getMonth() + 1).toString().padStart(2, '0');
+        const year = jsDate.getFullYear();
+
+        return `${year}/${month}/${day}`;
+    } catch (error) {
+        console.error('Error en convertExcelDate:', error);
+        return '';
+    }
+}
+
+function limpiarArchivo() {
+    document.getElementById('excelFile').value = '';
+    document.getElementById('fileName').innerText = '';
+}
+
+function limpiarTabla() {
+    if (state.dataTableInitialized) {
+        $('#xlsxPreviewTable').DataTable().clear().destroy();
+        state.dataTableInitialized = false;
+    }
+    $('#xlsxPreviewTable tbody').empty();
+    $('#errorContainer').hide();
+    $('#btnInsertar').hide();
+}
+
+function limpiarDatos() {
+    state.tableData = [];
+    Object.keys(state.fechasDias).forEach(key => {
+        state.fechasDias[key] = '';
+    });
+}
+
+function limpiarTodo() {
+    limpiarArchivo();
+    limpiarTabla();
+    limpiarDatos();
+}
+
+function uploadExcel() {
+    const fileInput = document.getElementById('excelFile');
+    fileInput.value = '';
+    fileInput.click();
+
+    fileInput.onchange = async function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        try {
+            document.getElementById("spinner").style.display = "block";
+            document.getElementById('fileName').innerText = file.name;
+            state.fileName = file.name;
+
+            const arrayBuffer = await file.arrayBuffer();
+            const data = new Uint8Array(arrayBuffer);
+            const workbook = XLSX.read(data, { type: 'array' });
+
+            const proceso = document.getElementById("proceso").value;
+            if (proceso === "PRENSAS") {
+                processPrensasExcelData(workbook);
+            } else {
+                processEnsambleExcelData(workbook);
+            }
+        } catch (error) {
+            alert('Hubo un error al procesar el archivo');
+        } finally {
+            document.getElementById("spinner").style.display = "none";
+        }
+    };
+}
+////////////////////////////
+////      ENSAMBLE     /////
+////////////////////////////
+function processEnsambleExcelData(workbook) {
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    state.tableData = [];
+
+    Object.keys(state.fechasDias).forEach((key, index) => {
+        const column = String.fromCharCode(72 + index);
+        state.fechasDias[key] = convertExcelDate(worksheet[`${column}2`]);
+    });
+    let rowIndex = 4;
+    while (true) {
+
+        const numeroParte = worksheet[`B${rowIndex}`]?.v;
+        if (!numeroParte) break;
+
+        const row = processEnsambleRow(worksheet, rowIndex);
+        if (row) state.tableData.push(row);
+        rowIndex++;
+    }
+
+    updateTable();
+    }
+////////////////////////////
+////      PRENSAS      /////
+////////////////////////////
+    function processPrensasExcelData(workbook) {
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        state.tableData = [];
+
+        state.fechasDias = {
+            fechaLunes: null,
+            fechaMartes: null,
+            fechaMiercoles: null,
+            fechaJueves: null,
+            fechaViernes: null,
+            fechaSabado: null
+        };
+
+        const firstDateCell = worksheet['H2'];
+        console.log('Contenido de celda H2:', firstDateCell);
+        let currentDate = null;
+
+        if (firstDateCell && firstDateCell.t === 'n') {
+            // Procesar fecha numérica de Excel
+            currentDate = excelDateToFormattedDate(firstDateCell.v);
+            console.log('Primera fecha procesada:', currentDate);
+        } else if (firstDateCell && firstDateCell.t === 's') {
+            // Si la celda es texto, simplemente asignamos el valor
+            currentDate = firstDateCell.v; // Asumimos que ya está en el formato correcto
+            console.log('Primera fecha procesada desde texto:', currentDate);
+        }
+
+        // Generar fechas para cada día
+        if (currentDate) {
+            const [day, month, year] = currentDate.split('/'); // Cambiado el orden para dd/MM/yyyy
+            const baseDate = new Date(year, parseInt(month) - 1, parseInt(day));
+
+            // Asignar la fecha del lunes en formato yyyy/MM/dd
+            state.fechasDias.fechaLunes = formatDate(baseDate); // Usar función para formatear
+
+            const dias = ['fechaMartes', 'fechaMiercoles', 'fechaJueves', 'fechaViernes', 'fechaSabado'];
+            dias.forEach((dia, index) => {
+                const nextDate = new Date(baseDate);
+                nextDate.setDate(baseDate.getDate() + (index + 1)); // Sumar 1 para martes, 2 para miércoles, etc.
+
+                // Formatear la fecha en yyyy/MM/dd
+                state.fechasDias[dia] = formatDate(nextDate);
+
+                console.log(`Fecha generada para ${dia}:`, state.fechasDias[dia]);
+            });
+        } else {
+            console.error('No se pudo obtener la primera fecha');
+        }
+
+        // Verificar las fechas antes de procesar las filas
+        console.log('Todas las fechas generadas:', state.fechasDias);
+
+        // Procesar las filas de datos
+        let rowIndex = 4;
+        while (true) {
+            const numeroParte = worksheet[`B${rowIndex}`]?.v;
+            if (!numeroParte) break;
+            const row = processPrensasRow(worksheet, rowIndex);
+            if (row) state.tableData.push(row);
+            rowIndex++;
+        }
+
+        updateTablePrensas();
+    }
+
+    function excelDateToFormattedDate(excelDate) {
+        // Convertir el número de Excel a una fecha JavaScript
+        const utc_days = Math.floor(excelDate - 25569); // Ajuste por el sistema de fechas de Excel
+        const utc_value = utc_days * 86400; // Convertir días a segundos
+        const date_info = new Date(utc_value * 1000); // Crear objeto Date
+
+        // Obtener año, mes y día
+        const year = date_info.getFullYear();
+        const month = String(date_info.getMonth() + 1).padStart(2, '0');
+        const day = String(date_info.getUTCDate()).padStart(2, '0'); // Cambiar a getUTCDate()
+
+        return `${day}/${month}/${year}`; // Devolver en formato dd/MM/yyyy
+    }
+
+    function processPrensasRow(worksheet, rowIndex) {
+        const dias = ['H', 'I', 'J', 'K', 'L', 'M'];
+        const data = {
+            Linea: worksheet[`A${rowIndex}`]?.v,
+            NoParte: worksheet[`B${rowIndex}`]?.v
+        };
+
+        let hasData = false;
+        dias.forEach((col, index) => {
+            const dayName = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'][index];
+            const value = formatValuePrensas(worksheet[`${col}${rowIndex}`]?.v);
+            data[dayName] = value.cantidad;
+            data[`${dayName}Parcial`] = value.esParcial;
+            if (value.cantidad) hasData = true;
+        });
+
+        data.Total = dias.reduce((total, col) => {
+            return total + formatValue(worksheet[`${col}${rowIndex}`]?.v).cantidad;
+        }, 0);
+
+        return hasData ? data : null;
+    }
+
+//////////////////////////////////////////////////////////////
+
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}/${month}/${day}`; // Formato yyyy/MM/dd
+    }
+
+
+///////////////////////
+function processEnsambleRow(worksheet, rowIndex) {
+    const dias = ['G', 'H', 'I', 'J', 'K', 'L', 'M'];
+    const data = {
+        Linea: worksheet[`A${rowIndex}`]?.v,
+        NoParte: worksheet[`B${rowIndex}`]?.v
+    };
+
+    let hasData = false;
+    dias.forEach((col, index) => {
+        const dayName = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'][index];
+        const value = formatValue(worksheet[`${col}${rowIndex}`]?.v);
+        data[dayName] = value.cantidad;
+        data[`${dayName}Parcial`] = value.esParcial;
+        if (value.cantidad) hasData = true;
+    });
+
+    data.Total = formatValue(worksheet[`N${rowIndex}`]?.v).cantidad;
+    return hasData ? data : null;
+    }
+
+function updateTable() {
+    const tableBody = document.querySelector('#xlsxPreviewTable tbody');
+    tableBody.innerHTML = '';
+
+    state.tableData.forEach(dataRow => {
+        const tr = document.createElement('tr');
+        tr.appendChild(createCell(dataRow.Linea));
+        tr.appendChild(createCell(dataRow.NoParte));
+
+        ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'].forEach(dia => {
+            const td = createCell(
+                dataRow[`${dia}Parcial`] ?
+                `${dataRow[dia]} + 1 parcial` :
+                dataRow[dia] || ''
+            );
+            tr.appendChild(td);
+        });
+
+        tr.appendChild(createCell(dataRow.Total || ''));
+        tableBody.appendChild(tr);
+    });
+
+    document.getElementById('btnInsertar').style.display = 'block';
+    }
+
+function updateTablePrensas() {
+    const tableBody = document.querySelector('#xlsxPreviewTable tbody');
+    tableBody.innerHTML = '';
+
+    state.tableData.forEach(dataRow => {
+        const tr = document.createElement('tr');
+        tr.appendChild(createCell(dataRow.Linea));
+        tr.appendChild(createCell(dataRow.NoParte));
+
+        ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'].forEach(dia => {
+            const valorDia = dataRow[dia];
+            let cellValue = '';
+
+            if (valorDia != null && valorDia != '0') {
+                const cantidadRedondeada = Math.ceil(valorDia);
+                cellValue = cantidadRedondeada.toString();
+            } else {
+                cellValue = '';
+            }
+
+            const td = createCell(cellValue);
+            tr.appendChild(td);
+
+        });
+
+        tr.appendChild(createCell(dataRow.Total || ''));
+        tableBody.appendChild(tr);
+    });
+
+    document.getElementById('btnInsertar').style.display = 'block';
+}
+
+function createCell(text) {
+    const td = document.createElement('td');
+    td.textContent = text;
+    return td;
+}
+
+function uploadExcelData() {
+    const nombreUsuario = '@Session["NombreUsuario"]';
+    const proceso = document.getElementById("proceso").value;
+    if (proceso == 'PRENSAS') {
+        console.log('Estado antes de enviar:', {
+            tableData: state.tableData,
+            fechasDias: state.fechasDias,
+            fileName: state.fileName
+        });
+        if (!state.fechasDias) {
+            console.error('fechasDias está vacío o no definido');
+            return;
+        }
+        Object.entries(state.fechasDias).forEach(([key, value]) => {
+            console.log(`Fecha para ${key}:`, value);
+        });
+        $.ajax({
+            url: '/Tier2/datosPlanSemanalPrensas',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({
+                datosXLSX: state.tableData,
+                nombreUsuario: nombreUsuario,
+                fechasDias: state.fechasDias,
+                nombrePlan: state.fileName,
+                proceso: proceso
+            }),
+            success: function (response) {
+                if (response.success == true) {
+                    alert('Datos guardados exitosamente');
+                } else {
+                    alert('Los datos no se pudieron guardar');
+                    console.log("Error: " + response.Message)
+                }
+                limpiarTodo();
+            },
+            error: function (xhr, status, error) {
+                alert('Error al guardar los datos: ' + error);
+                console.error(xhr.responseText);
+            }
+        });
+    } else {
+        $.ajax({
+            url: '/Tier2/datosPlanSemanal',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({
+                datosXLSX: state.tableData,
+                nombreUsuario: nombreUsuario,
+                fechasDias: state.fechasDias,
+                nombrePlan: state.fileName,
+                proceso: proceso
+            }),
+            success: function (response) {
+                if (response.success == true) {
+                    alert('Datos guardados exitosamente');
+                } else {
+                    alert('Los datos no se pudieron guardar');
+                    console.log("Error: " + response.Message)
+                }
+                limpiarTodo();
+            },
+            error: function (xhr, status, error) {
+                alert('Error al guardar los datos: ' + error);
+                console.error(xhr.responseText);
+            }
+        });
+    }
+    }
+
+function processExcelDate(cell) {
+    if (!cell) return null;
+
+    // Si es una cadena de texto (como "PRODUCCIÓN")
+    if (cell.t === 's') {
+        return null;
+    }
+
+    // Si es una fecha numérica de Excel
+    if (cell.t === 'n') {
+        return convertExcelDateToISO(cell.v);
+    }
+
+    // Si es una fecha en formato texto (dd/mm/yyyy)
+    if (cell.t === 's' && cell.v.includes('/')) {
+        const [day, month, year] = cell.v.split('/');
+        const date = new Date(year, month - 1, day);
+        return date.toISOString().split('T')[0];
+    }
+
+    return null;
+    }
+
+function convertExcelDateToISO(excelDate) {
+    const millisecondsPerDay = 24 * 60 * 60 * 1000;
+    const excelEpoch = new Date(Date.UTC(1900, 0, -1));
+    const javascriptDate = new Date(excelEpoch.getTime() + (excelDate - 1) * millisecondsPerDay);
+    return javascriptDate.toISOString().split('T')[0];
+}
+
+</script>
+

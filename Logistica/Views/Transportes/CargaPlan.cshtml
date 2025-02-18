@@ -1,0 +1,250 @@
+﻿
+@{
+    ViewBag.Title = "CargaPlan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="pagetitle">
+    <h1>Carga Plan Unidades</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Dashboard", "Home")">Home</a></li>
+            <li class="breadcrumb-item">Transportes</li>
+            <li class="breadcrumb-item active">Carga Plan Unidades</li>
+        </ol>
+    </nav>
+</div>
+
+<style>
+
+    /* Estilos para los formularios */
+    .form-floating .input-group-text {
+        background-color: #2980B9;
+        color: white;
+        border-radius: 0;
+    }
+
+    .form-floating input,
+    .form-floating select {
+        border: 1px solid #2980B9;
+    }
+
+        .form-floating input:focus,
+        .form-floating select:focus {
+            border-color: #1ABC9C;
+            box-shadow: 0 0 10px rgba(26, 188, 156, 0.5);
+        }
+</style>
+
+
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-boxes me-1"></i>CARGAR PLAN TRANSPORTE CSV
+    </div>
+    <div class="card-body">
+
+        <div class="row g-3">
+
+            <input type="file" id="fileInput" style="display: none;" />
+
+            <div id="errorContainer" class="alert alert-danger" style="display: none;"></div>
+
+            <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2">
+                <div div class="input-group">
+                    <button type="button" id="btnCargarCSV" class="form-control btn btn-outline-success" onclick="document.getElementById('fileInput').click(); limpiarTabla();">
+                        <i class="fas fa-file-csv fa-2x btnIcon"></i> ABRIR CSV
+                    </button>
+                </div>
+
+            </div>
+            <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2">
+                <div div class="input-group">
+                    <button type="button" class="form-control btn btn-outline-dark" onclick="abrirModalManual()">
+                        <i class="fas fa-plus-circle fa-2x btnIcon"></i> CARGA MANUAL
+                    </button>
+                </div>
+
+            </div>
+            <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2">
+                <div div class="">
+                    <button type="button" id="btnInsertar" class="form-control btn btn-outline-primary" onclick="insertarDatos()" style="display:none">
+                        <i class="fas fa-check fa-2x btnIcon"></i> CARGAR PLAN
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+
+                <div class="table-container">
+                    <table id="csvPreviewTable" class="table-custom" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th class="break-word">FECHA PLANEADA</th>
+                                <th class="break-word">PROVEEDOR</th>
+                                <th class="break-word">PROYECTO</th>
+                                <th class="break-word">TIPO UNIDAD</th>
+                                <th class="break-word">L. TRANSPORTISTA</th>
+                                <th class="break-word">CARGA</th>
+                                <th class="break-word">HR. LLEGADA PLANEADA</th>
+                                <th class="break-word">HR. SALIDA PLANEADA</th>
+                                <th class="break-word">PROCESO</th>
+                                <th class="break-word">ASN</th>
+                                <th class="break-word">AREA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div><!-- End floating Labels Form -->
+
+    </div>
+
+</div>
+
+
+<div class="modal fade" id="modalCargaManual" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img id="img_fotografia" src="~/assets/Imgs/registro.png" class="img-fluid" style="height:2.8em" alt="">
+                <h5 class="modal-title" id="modalCargaManualLabel">Plan Manual</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row form">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row g-3">
+
+                                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 alert alert-danger" id="errorContainerM" style="display: none;"></div>
+
+
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-calendar-alt"></i></span>
+                                            <input type="text" class="form-control" id="input_FechaPlanM" required>
+                                            <label for="input_FechaPlanM" style="margin-left: 2.5em; z-index:5">Fecha Planeada</label>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-clock"></i></span>
+                                            <input type="text" class="form-control" id="input_HrllegadaPlanM" required>
+                                            <label for="input_HrllegadaPlanM" style="margin-left: 2.5em; z-index:5">Hr LLegada Planeada</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-clock"></i></span>
+                                            <input type="text" class="form-control" id="input_HrSalidaPlanM" required>
+                                            <label for="input_HrSalidaPlanM" style="margin-left: 2.5em; z-index:5">Hr Salida Planeada</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-file-invoice"></i></span>
+                                            <input type="text" class="form-control" id="input_ASNM" required>
+                                            <label for="input_ASNM" style="margin-left: 2.5em; z-index:5">ASN</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-truck"></i></span>
+                                            <input type="text" class="form-control" id="input_ProveedorM" required>
+                                            <label for="input_ProveedorM" style="margin-left: 2.5em; z-index:5">Proveedor</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-tasks"></i></span>
+                                            <input type="text" class="form-control" id="input_ProyectoM" required>
+                                            <label for="input_ProyectoM" style="margin-left: 2.5em; z-index:5">Proyecto</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-road"></i></span>
+                                            <input type="text" class="form-control" id="input_LineaTransM" required>
+                                            <label for="input_LineaTransM" style="margin-left: 2.5em; z-index:5">Linea Transportista</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-truck-moving"></i></span>
+                                            <input type="text" class="form-control" id="input_UnidadM" required>
+                                            <label for="input_UnidadM" style="margin-left: 2.5em; z-index:5">Unidad</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-4 col-lg-4 col-xl-4">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-battery-half"></i></span>
+                                            <input type="text" class="form-control" id="input_CargaM" required>
+                                            <label for="input_CargaM" style="margin-left: 2.5em; z-index:5">% Cargar</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-sitemap"></i></span>
+                                            <select class="form-select" id="select_AreaM" aria-label="Stat" required>
+                                                <option value="LOGISTICA">LOGISTICA</option>
+                                                <option value="INDIRECTOS">INDIRECTOS</option>
+                                                <option value="ROLLOS">ROLLOS</option>
+                                            </select>
+                                            <label style="margin-left: 2.5em; z-index:5" for="select_AreaM">AREA</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                                        <div class="form-floating input-group">
+                                            <span class="input-group-text" style="cursor:pointer"><i class="fas fa-cogs"></i></span>
+                                            <input type="text" class="form-control" id="input_ProcesoM" required>
+                                            <label for="input_ProcesoM" style="margin-left: 2.5em; z-index:5">Proceso</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col-12 d-flex align-items-center justify-content-end">
+                    <div class="text-center">
+                        <button type="reset" class="btn btn-outline-danger" data-bs-dismiss="modal"><i class="fas fa-redo"></i> CANCELAR</button>
+                        <button id="btn_registrarSalida" onclick="agregarFilaManual(event)" type="submit" class="btn btn-outline-success"><i class="fas fa-save fa-lg"></i> AGREGAR REGISTRO MANUAL</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section scripts {
+    <script>
+        var signoutUrl = "@Url.Action("SignOut", "Acceso")";
+        var Tipo = @Session["Tipo"];
+        const AutorizedBy = "@Session["NombreUsuario"]";
+        var nombreUsuario = '@Session["NombreUsuario"]';
+
+    </script>
+
+    <script src="~/assets/js/Transportes/CargaPlan.js"></script>
+
+}

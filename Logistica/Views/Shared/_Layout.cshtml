@@ -1,0 +1,226 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>LOGISTICA - @ViewBag.Title</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <link rel="icon" type="image/png" href="~/assets/Imgs/registro.png">
+
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+    @Styles.Render("~/Content/css")
+    <link rel="stylesheet" href="~/assets/fontawesome/css/all.min.css" />
+
+
+</head>
+
+<body>
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+
+        <div class="d-flex align-items-center justify-content-between">
+            <a href="@Url.Action("Dashboard", "Home")" class="logo d-flex align-items-center">
+                @*<img src="~/assets/img/logoCompras.png" alt=""*@
+                <span class="logo d-flex align-items-center"> LOGISTICA</span>
+            </a>
+            @*<i class="bi bi-list toggle-sidebar-btn"></i>*@
+            @*<i class="fas fa-bars toggle-sidebar-btn" data-bs-toggle="collapse" data-bs-target="#sidebar"></i>*@
+            <i class="fas fa-bars toggle-sidebar-btn"></i>
+
+
+        </div><!-- End Logo -->
+
+
+
+
+        <nav class="header-nav ms-auto">
+            <ul class="d-flex align-items-center">
+                <li class="nav-item d-block d-lg-none">
+                    <a class="nav-link nav-icon search-bar-toggle " href="#">
+                        <i class="bi bi-search"></i>
+                    </a>
+                </li>
+
+
+                <li class="nav-item dropdown pe-3">
+
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                        <img src="@(string.IsNullOrEmpty(Session["PathPerfil"] as string) ? "http://192.168.40.240:8104/assets/Perfiles/usuario.png" : Session["PathPerfil"].ToString())" alt="Profile" class="rounded-circle profile-img">
+
+
+                        <span class="d-none d-md-block dropdown-toggle ps-2">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <span>@Session["nombre"]</span>
+                            }
+                            else
+                            {
+                                <span>Invitado</span>
+                            }
+                        </span>
+                    </a><!-- End Profile Iamge Icon -->
+
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                        <li class="dropdown-header">
+                            <h6>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <span>@Session["fullname"]</span>
+                                }
+                                else
+                                {
+                                    <span>Invitado</span>
+                                }
+                            </h6>
+                            @*<span>Ingeniero de Desarrollo de Software</span>*@
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="@Url.Action("Perfil", "Home")">
+                                <i class="fas fa-user"></i>
+                                <span>Mi Perfil</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="http://192.168.40.240:8098/Compras/Login/">
+                                <i class="fas fa-question-circle"></i>
+                                <span>Ayuda</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" style="color:red" id="logoutLink" href="@Url.Action("SignOut","Acceso")">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Cerrar Sesion</span>
+                            </a>
+                        </li>
+
+                    </ul><!-- End Profile Dropdown Items -->
+                </li><!-- End Profile Nav -->
+
+            </ul>
+        </nav><!-- End Icons Navigation -->
+
+    </header><!-- End Header -->
+    <!-- ======= Sidebar ======= -->
+    <aside id="sidebar" class="sidebar">
+
+        <ul class="sidebar-nav" id="sidebar-nav">
+            <li class="nav-item">
+                <a class="nav-link " href="@Url.Action("Dashboard", "Home")">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li><!-- End Dashboard Nav -->
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-target="#forms-nav-transportes" data-bs-toggle="collapse" href="#">
+                    <i class="fas fa-truck-moving"></i><span> Transportes</span><i class="fas fa-chevron-down ms-auto"></i>
+                </a>
+                <ul id="forms-nav-transportes" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="@Url.Action("Dashboard", "Transportes")" style="cursor:pointer">
+                            <i class="fas fa-angle-right"></i><span> Control de  Unidades</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("CargaPlan", "Transportes")" style="cursor:pointer">
+                            <i class="fas fa-angle-right"></i><span> Carga Plan</span>
+                        </a>
+                    </li>
+                </ul>
+            </li><!-- End Forms Nav -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-target="#forms-nav-tier2" data-bs-toggle="collapse" href="#">
+                    <i class="fas fa-warehouse"></i><span> Tier 2</span><i class="fas fa-chevron-down ms-auto"></i>
+                </a>
+                <ul id="forms-nav-tier2" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="@Url.Action("PlanEtiquetas", "Tier2")" style="cursor:pointer">
+                            <i class="fas fa-angle-right"></i><span> Plan Etiquetas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("ModificarPlan", "Tier2")" style="cursor:pointer">
+                            <i class="fas fa-angle-right"></i><span> Modificar Plan</span>
+                        </a>
+                    </li>
+                </ul>
+            </li><!-- End Forms Nav -->
+        </ul>
+
+    </aside><!-- End Sidebar-->
+
+    <main id="main" class="main">
+
+        @RenderBody()
+
+    </main><!-- End #main -->
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="footer">
+        <div class="copyright">
+            &copy; Topre Autoparts Mexico <strong><span>@DateTime.Now.Year</span></strong>. All Rights Reserved
+        </div>
+        <div class="credits">
+            Designed by IT Department.
+        </div>
+    </footer><!-- End Footer -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <i class="" id="iconToast"></i>
+                <strong style="margin-left: 0.5rem;" class="me-auto" id="titleToast"></strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="messageToast">
+            </div>
+        </div>
+    </div>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="fas fa-chevron-up"></i></a>
+
+    <div class="spinner" id="spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+    </div>
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryui")
+    @*@Scripts.Render("~/bundles/bootstrap")*@
+
+    @Scripts.Render("~/bundles/complementos")
+
+    @RenderSection("scripts", required: false)
+
+
+
+    <script>
+        // Función para mostrar el spinner al hacer clic en el botón de "Cerrar Sesión"
+        $(function () {
+            $('#logoutLink').click(function () {
+                $('#spinner').show();
+            });
+        });
+    </script>
+
+</body>
+
+</html>

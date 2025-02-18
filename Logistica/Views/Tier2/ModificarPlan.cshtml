@@ -1,0 +1,348 @@
+﻿
+@{
+    ViewBag.Title = "ModificarPlan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pagetitle">
+    <h1>Modificar plan</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Dashboard", "Home")">Home</a></li>
+            <li class="breadcrumb-item">Tier 2</li>
+            <li class="breadcrumb-item active">Modificar plan</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="container-fluid">
+
+    <!-- Main Card -->
+    <div class="card">
+        <!-- Card Header -->
+        <div class="card-header">
+            <i class="fas fa-boxes me-1"></i>
+            MODIFICAR PLAN DE ETIQUETAS XLSX
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+            <!-- Process Selection -->
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="proceso" class="form-label">Área</label>
+                        <select class="form-control" id="proceso" name="proceso">
+                            <option value="Selecciona" selected>Selecciona un área</option>
+                            <option value="ENSAMBLE">ENSAMBLE</option>
+                            <option value="PRENSAS">PRENSAS</option>
+                        </select>
+                        <br />
+                        <label for="startDate"> Fecha </label>
+                        <input id="startDate" class="form-control" type="date" disabled />
+                        <br />
+                        <button id="btnCargarDatos" class="btn btn-primary mt-2" type="button" disabled>Mostrar etiquetas</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="spinner" class="text-center" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+            </div>
+
+            <!-- Error Container -->
+            <div id="errorContainer" class="alert alert-danger mt-3" style="display: none;"></div>
+
+            <div id="titleDiv" class="alert alert-info mt-3" style="display: none;">
+            </div>
+
+            <!-- Data Table -->
+            <div class="table-responsive mt-3">
+                <table id="xlsxPreviewTable" class="table-custom" style="width:70%">
+                    <thead>
+                        <tr>
+                            <th class="break-word">Numero de parte</th>
+                            <th class="break-word">Cantidad Etiquetas</th>
+                            <th class="break-word">Etiquetas Parciales</th>
+                            <th class="break-word text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <button id="saveAllChanges" class="btn btn-primary mt-3" data-toggle="modal" data-target="#confirmationModal" style="display:none">
+                Guardar los cambios
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmar información</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Deseas confirmar el plan para <span id="spanProceso" class="fw-bold"></span>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="insertarDatos" class="btn btn-primary" data-bs-dismiss="modal" onclick="uploadExcelData()">
+                    Guardar cambios
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="confirmationModal" class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            La información ha sido guardada correctamente.
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<link href="~/styles/StyleDashboard.css" rel="stylesheet">
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.com/libraries/bootstrap-datetimepicker/4.17.37"></script>
+
+<script>
+    document.getElementById('proceso').addEventListener('change', function () {
+        const selectElement = document.getElementById('proceso');
+        const dateInput = document.getElementById('startDate');
+        const alertButton = document.getElementById('btnCargarDatos');
+
+        if (selectElement.value !== "Selecciona") {
+            dateInput.disabled = false;
+            alertButton.disabled = !dateInput.value;
+        } else {
+            dateInput.disabled = true;
+            dateInput.value = "";
+            alertButton.disabled = true;
+            var tituloDiv = document.querySelector("#titleDiv");
+            tituloDiv.className = '';
+            tituloDiv.style.display = 'none;';
+            tituloDiv.innerHTML = '';
+            const tbody = document.querySelector('#xlsxPreviewTable tbody');
+            tbody.innerHTML = '';
+        }
+    });
+
+    document.getElementById('startDate').addEventListener('change', function () {
+        const selectElement = document.getElementById('proceso');
+        const dateInput = document.getElementById('startDate');
+        const alertButton = document.getElementById('btnCargarDatos');
+        alertButton.disabled = !(selectElement.value !== "Selecciona" && dateInput.value);
+    });
+
+    document.getElementById('btnCargarDatos').addEventListener('click', mostrarAlertas);
+
+    document.getElementById('saveAllChanges').addEventListener('click', saveAllChanges);
+    function mostrarAlertas() {
+        const selectElement = document.getElementById('proceso');
+        const dateInput = document.getElementById('startDate');
+        const area = selectElement.value;
+        const date = dateInput.value;
+
+        if (area !== "Selecciona" && date) {
+            document.getElementById('spinner').style.display = 'block';
+
+            $.ajax({
+                url: '/Tier2/consultarPlan',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({
+                    proceso: area,
+                    fecha: date
+                }),
+                success: function (response) {
+                    if (response.success && response.data) {
+                        response.data.forEach(item => {
+                            if (item.FechaPlan) {
+                                const timestamp = parseInt(item.FechaPlan.match(/\d+/)[0]);
+                                item.FechaPlan = new Date(timestamp).toISOString().split('T')[0];
+                            }
+                        });
+
+                        var titleDiv = document.getElementById('titleDiv');
+                        titleDiv.style.display = 'block';
+                        titleDiv.innerHTML = `<strong>Plan actual:</strong> ${response.data[0].TituloPlan}`;
+                        //document.querySelector('.table-responsive').before(titleDiv);
+
+                        const tbody = document.querySelector('#xlsxPreviewTable tbody');
+                        tbody.innerHTML = '';
+
+                        response.data.forEach((item, index) => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                            <td>${item.NoParte}</td>
+                            <td>
+                                <span class="cantidad-display">${item.CantidadEtiquetas}</span>
+                                <input type="number" class="form-control cantidad-edit" style="display:none" value="${item.CantidadEtiquetas}">
+                            </td>
+                            <td>
+                                <span class="parcial-display">${item.EtiquetaParcial}</span>
+                                <input type="number" class="form-control parcial-edit" style="display:none" value="${item.EtiquetaParcial}">
+                            </td>
+                            <td>
+                                <button class="btn btn-edit" data-row="${index}">
+                                    <i class="fas fa-pen-square" style="color: #0d6efd"></i>
+                                </button>
+                                <button class="btn btn-save" data-row="${index}" style="display:none">
+                                    <i class="fas fa-save" style="color: #198754"></i>
+                                </button>
+                                <button class="btn btn-cancel" data-row="${index}" style="display:none">
+                                    <i class="fas fa-times" style="color: #dc3545"></i>
+                                </button>
+                            </td>
+                        `;
+                            tbody.appendChild(tr);
+                        });
+
+                        setupEditButtons();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error en la petición:", error);
+                    document.getElementById('errorContainer').style.display = 'block';
+                    document.getElementById('errorContainer').textContent = 'Error al cargar los datos: ' + error;
+                },
+                complete: function () {
+                    document.getElementById('spinner').style.display = 'none';
+                }
+            });
+        } else {
+            alert("Por favor selecciona un área y una fecha.");
+        }
+    }
+
+    function setupEditButtons() {
+        let hasChanges = false;
+
+        document.querySelectorAll('.btn-edit').forEach(button => {
+            button.addEventListener('click', function () {
+                const row = this.closest('tr');
+
+                // Guardar valores actuales para cancelar
+                row.dataset.oldCantidad = row.querySelector('.cantidad-display').textContent;
+                row.dataset.oldParcial = row.querySelector('.parcial-display').textContent;
+
+                // Mostrar campos de edición
+                row.querySelector('.cantidad-display').style.display = 'none';
+                row.querySelector('.cantidad-edit').style.display = 'block';
+                row.querySelector('.parcial-display').style.display = 'none';
+                row.querySelector('.parcial-edit').style.display = 'block';
+
+                // Cambiar botones
+                this.style.display = 'none';
+                row.querySelector('.btn-save').style.display = 'inline-block';
+                row.querySelector('.btn-cancel').style.display = 'inline-block';
+            });
+        });
+
+        document.querySelectorAll('.btn-save').forEach(button => {
+            button.addEventListener('click', function () {
+                const row = this.closest('tr');
+                const newCantidad = row.querySelector('.cantidad-edit').value;
+                const newParcial = row.querySelector('.parcial-edit').value;
+
+                if (newCantidad < 0 || newParcial < 0) {
+                    alert('Los valores no pueden ser negativos');
+                    return;
+                }
+
+                row.dataset.modified = 'true';
+                row.dataset.newCantidad = newCantidad;
+                row.dataset.newParcial = newParcial;
+
+                row.querySelector('.cantidad-display').textContent = newCantidad;
+                row.querySelector('.parcial-display').textContent = newParcial;
+                toggleEditMode(row, false);
+
+                hasChanges = true;
+                document.getElementById('saveAllChanges').style.display = 'block';
+            });
+        });
+
+        document.querySelectorAll('.btn-cancel').forEach(button => {
+            button.addEventListener('click', function () {
+                const row = this.closest('tr');
+
+                // Restaurar valores originales
+                row.querySelector('.cantidad-edit').value = row.dataset.oldCantidad;
+                row.querySelector('.parcial-edit').value = row.dataset.oldParcial;
+
+                // Restaurar vista normal
+                toggleEditMode(row, false);
+            });
+        });
+    }
+
+    function saveAllChanges() {
+        const changedRows = document.querySelectorAll('tr[data-modified="true"]');
+        const changes = Array.from(changedRows).map(row => ({
+            noParte: row.querySelector('td:first-child').textContent,
+            cantidadEtiquetas: row.dataset.newCantidad,
+            etiquetaParcial: row.dataset.newParcial
+        }));
+
+        const proceso = document.getElementById('proceso').value;
+        const fecha = document.getElementById('startDate').value;
+
+        document.getElementById('spinner').style.display = 'block';
+
+        $.ajax({
+            url: '/Tier2/actualizarPlan',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({
+                proceso: proceso,
+                fecha: fecha,
+                registros: changes
+            }),
+            success: (response) => {
+                if (response.success) {
+                    alert('Todos los cambios guardados correctamente', 'success');
+                    changedRows.forEach(row => {
+                        delete row.dataset.modified;
+                        delete row.dataset.newCantidad;
+                        delete row.dataset.newParcial;
+                    });
+                    document.getElementById('saveAllChanges').style.display = 'none';
+                } else {
+                    alert('Error al guardar los cambios: ' + response.message, 'error');
+                }
+            },
+            error: (xhr, status, error) => {
+                alert('Error al guardar los cambios. Error: ' + error);
+                alert('Error al guardar los cambios. Status: ' + status);
+                alert('Error al guardar los cambios. XHR: ' + xhr);
+            },
+            complete: () => {
+                document.getElementById('spinner').style.display = 'none';
+            }
+        });
+    }
+
+    function toggleEditMode(row, editing) {
+        row.querySelector('.cantidad-display').style.display = editing ? 'none' : 'block';
+        row.querySelector('.cantidad-edit').style.display = editing ? 'block' : 'none';
+        row.querySelector('.parcial-display').style.display = editing ? 'none' : 'block';
+        row.querySelector('.parcial-edit').style.display = editing ? 'block' : 'none';
+        row.querySelector('.btn-edit').style.display = editing ? 'none' : 'inline-block';
+        row.querySelector('.btn-save').style.display = editing ? 'inline-block' : 'none';
+        row.querySelector('.btn-cancel').style.display = editing ? 'inline-block' : 'none';
+    }
+
+</script>
+
+

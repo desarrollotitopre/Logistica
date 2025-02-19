@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Highsoft.Web.Mvc.Charts;
 using System.Diagnostics;
+using System.IO;
 
 namespace TruckyV2.Clases
 {
@@ -450,9 +451,9 @@ namespace TruckyV2.Clases
                     // Query para traer todos los datos del usuario y los IDs de vistas permitidas en una sola consulta
                     var query = @"
                         SELECT 
-	                        US.Nomina, RP.Fotografia AS PathPerfil, US.IDDepartamento, 
+	                        US.Nomina, UP.PathPerfil, US.IDDepartamento, 
                             US.ModuloPerfilID
-                        FROM Usuarios AS US INNER JOIN RH..Reclutamiento_Personal AS RP ON US.Nomina =  RP.Nomina 
+                        FROM Usuarios AS US INNER JOIN Production..UsuariosPlataformas AS UP ON US.Nomina =  UP.Nomina 
                         WHERE US.Nomina = @Nomina";
 
                     using (var cmd = new SqlCommand(query, conn))
@@ -1011,6 +1012,92 @@ namespace TruckyV2.Clases
                     }
                 }
             }
+        }
+
+
+        public string GuardarImagen(HttpPostedFileBase archivo, string usuarioId, string pathOld)
+        {
+            if (archivo != null && archivo.ContentLength > 0)
+            {
+                string extension = Path.GetExtension(archivo.FileName)?.ToLower(); // Obtener la extensión original del archivo
+                if (string.IsNullOrEmpty(extension))
+                {
+                    return null; // Si no hay extensión, salir del método
+                }
+
+                string ruta = "";
+                string url = "";
+                string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+
+                // Configurar la ruta y URL según el tipo de imagen y conservar la extensión original
+                ruta = $"\\\\192.168.40.240\\wwwroot\\Perfiles_Usuarios_Plataformas\\Perfil_{usuarioId}_{timestamp}";
+                url = $"http://192.168.40.240/Perfiles_Usuarios_Plataformas/Perfil_{usuarioId}_{timestamp}";
+
+                // ** Eliminar el archivo anterior si existe **
+                if (!string.IsNullOrEmpty(pathOld))
+                {
+                    string rutaRed = @"//192.168.40.240/wwwroot/Perfiles_Usuarios_Plataformas/"; // Ruta de la carpeta de destino en red
+                    // Convertir la URL (pathOld) en una ruta física local
+                    string oldFilePath = pathOld.Replace(@"http://192.168.40.240/Perfiles_Usuarios_Plataformas/", rutaRed);
+
+                    // Verificar si el archivo existe y eliminarlo
+                    if (File.Exists(oldFilePath))
+                    {
+                        File.Delete(oldFilePath);
+                    }
+                }
+
+                // Guardar la nueva imagen con su extensión original
+                archivo.SaveAs(ruta + extension); // Guardar el archivo con la extensión adecuada
+
+                return url + extension; // Devolver la URL de acceso público
+            }
+            return null;
+        }
+
+
+        // Método para actualizar la información del usuario en la base de datos
+        public (int result, string message) ActualizarUsuario(string nomina, string nombre, string apellidos, string rutaFotoPerfil)
+        {
+            int result = 0;
+            string message = string.Empty;
+
+            using (var connection = new SqlConnection(cnP))
+            {
+                connection.Open();
+                using (var command = new SqlCommand("SP_actualizaDatosPerfil", connection))
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    // Parámetros de entrada
+                    command.Parameters.AddWithValue("@Nomina", Convert.ToInt32(nomina)); // Asegúrate que el tipo de datos coincide con la base de datos
+                    command.Parameters.AddWithValue("@Nombre", nombre);
+                    command.Parameters.AddWithValue("@Apellidos", apellidos);
+                    command.Parameters.AddWithValue("@PathPerfil", (object)rutaFotoPerfil ?? DBNull.Value);
+
+                    // Parámetros de salida
+                    var resultParam = new SqlParameter("@Result", SqlDbType.Int)
+                    {
+                        Direction = ParameterDirection.Output
+                    };
+                    var messageParam = new SqlParameter("@Message", SqlDbType.NVarChar, 255)
+                    {
+                        Direction = ParameterDirection.Output
+                    };
+
+                    command.Parameters.Add(resultParam);
+                    command.Parameters.Add(messageParam);
+
+                    // Ejecutar el procedimiento almacenado
+                    command.ExecuteNonQuery();
+
+                    // Obtener el valor de los parámetros de salida
+                    result = (int)resultParam.Value;
+                    message = (string)messageParam.Value;
+                }
+            }
+
+            return (result, message); // Retornamos el resultado y el mensaje
         }
 
     }

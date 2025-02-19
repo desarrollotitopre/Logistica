@@ -127,14 +127,18 @@ button {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.5); /* Fondo blanco semitransparente */
+    background-color: rgba(0, 0, 0, 0.5);
     color: #000; /* Color negro para el ícono */
     font-size: 8rem; /* Tamaño del ícono */
     text-align: center; /* Alineación centrada */
     line-height: 100vh; /* Centrado vertical */
-    animation: spin 3s linear infinite; /* Duración de la animación de 3 segundos */
+    /*animation: spin 3s linear infinite;  Duración de la animación de 3 segundos */
 }
 
+#spinner i {
+    color: white;
+    font-size: 6rem;
+}
 
 /* Fondo de partículas */
 #particles-js {

@@ -3,86 +3,84 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container-fluid">
-    <!-- Header Section -->
-    <div class="header-section">
-        <h1 class="mt-2">
-            Modificar plan
-        </h1>
-        <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Modificar plan de etiquetas</li>
+
+<div class="pagetitle">
+    <h1>Modificar plan de etiquetas</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Dashboard", "Home")">Home</a></li>
+            <li class="breadcrumb-item">Tier 2</li>
+            <li class="breadcrumb-item active">Modificar Plan</li>
         </ol>
+    </nav>
+</div>
+
+<!-- Main Card -->
+<div class="card">
+    <!-- Card Header -->
+    <div class="card-header">
+        <i class="fas fa-boxes me-1"></i>
+        MODIFICAR PLAN DE ETIQUETAS XLSX
     </div>
 
-
-
-    <!-- Main Card -->
-    <div class="card">
-        <!-- Card Header -->
-        <div class="card-header">
-            <i class="fas fa-boxes me-1"></i>
-            MODIFICAR PLAN DE ETIQUETAS XLSX
+    <!-- Card Body -->
+    <div class="card-body">
+        <!-- Process Selection -->
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="proceso" class="form-label">Área</label>
+                    <select class="form-control" id="proceso" name="proceso">
+                        <option value="Selecciona" selected>Selecciona un área</option>
+                        <option value="ENSAMBLE">ENSAMBLE</option>
+                        <option value="PRENSAS">PRENSAS</option>
+                    </select>
+                    <br />
+                    <label for="startDate"> Fecha </label>
+                    <input id="startDate" class="form-control" type="date" disabled />
+                    <br />
+                    <button id="btnCargarDatos" class="btn btn-primary mt-2" type="button" disabled>Mostrar etiquetas</button>
+                </div>
+            </div>
         </div>
 
-        <!-- Card Body -->
-        <div class="card-body">
-            <!-- Process Selection -->
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="proceso" class="form-label">Área</label>
-                        <select class="form-control" id="proceso" name="proceso">
-                            <option value="Selecciona" selected>Selecciona un área</option>
-                            <option value="ENSAMBLE">ENSAMBLE</option>
-                            <option value="PRENSAS">PRENSAS</option>
-                        </select>
-                        <br />
-                        <label for="startDate"> Fecha </label>
-                        <input id="startDate" class="form-control" type="date" disabled />
-                        <br />
-                        <button id="btnCargarDatos" class="btn btn-primary mt-2" type="button" disabled>Mostrar etiquetas</button>
-                    </div>
-                </div>
+        <!-- Loading Spinner -->
+        <div id="spinner" class="text-center" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
             </div>
-
-            <!-- Loading Spinner -->
-            <div id="spinner" class="text-center" style="display: none;">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Cargando...</span>
-                </div>
-            </div>
-
-            <!-- Error Container -->
-            <div id="errorContainer" class="alert alert-danger mt-3" style="display: none;"></div>
-
-            <div id="titleDiv" class="alert alert-info mt-3" style="display: none;">
-            </div>
-
-            <!-- Data Table -->
-            <div class="table-responsive mt-3">
-                <table id="xlsxPreviewTable" class="table-custom" style="width:70%">
-                    <thead>
-                        <tr>
-                            <th class="break-word">Linea</th>
-                            <th class="break-word">Numero de parte</th>
-                            <th class="break-word">Etiquetas solicitadas</th>
-                            <th class="break-word">Etiquetas por escanear</th>
-                            <th class="break-word">Etiquetas parciales solicitadas</th>
-                            <th class="break-word text-center">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-                <div>
-                    <button id="saveAllChanges" class="btn btn-primary mt-3" style="display:none">
-                        Guardar los cambios
-                    </button>
-                </div>
-            </div>
-
-
         </div>
+
+        <!-- Error Container -->
+        <div id="errorContainer" class="alert alert-danger mt-3" style="display: none;"></div>
+
+        <div id="titleDiv" class="alert alert-info mt-3" style="display: none;">
+        </div>
+
+        <!-- Data Table -->
+        <div class="table-responsive mt-3">
+            <table id="xlsxPreviewTable" class="table-custom" style="width:70%">
+                <thead>
+                    <tr>
+                        <th class="break-word">Linea</th>
+                        <th class="break-word">Numero de parte</th>
+                        <th class="break-word">Etiquetas solicitadas</th>
+                        <th class="break-word">Etiquetas por escanear</th>
+                        <th class="break-word">Etiquetas parciales solicitadas</th>
+                        <th class="break-word text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <div>
+                <button id="saveAllChanges" class="btn btn-primary mt-3" style="display:none">
+                    Guardar los cambios
+                </button>
+            </div>
+        </div>
+
+
     </div>
 </div>
 

@@ -94,7 +94,50 @@
         }
     });
 
+    $('#modalDetalle .close, #modalDetalle .btn-secondary').on('click', function () {
+        console.log("Botón de cerrar clickeado");
+        $('#modalDetalle').modal('hide'); // Cierra el modal manualmente
+    });
 });
+
+function obtenerDetalleEtiquetas(noParte, planSeleccionado, fechaSeleccionada) {
+    const datos = {
+        noParte: noParte,
+        proceso: planSeleccionado,
+        fecha: fechaSeleccionada
+    };
+
+    $.ajax({
+        url: '/Tier2/obtenerDetalleEtiquetas',
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(datos),
+        success: function (response) {
+            console.log("Detalle de etiquetas recibido:", response);
+            if (response.success && response.data) {
+                llenarTablaDetalle(response.data); // Llenar la tabla en el modal
+            } else {
+                alert("No se encontraron detalles para este No. Parte.");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error en la petición:", error);
+            alert("Error al obtener el detalle de las etiquetas: " + error);
+        }
+    });
+}
+
+function llenarTablaDetalle(datos) {
+    const tabla = $('#tablaDetalleEtiquetas tbody');
+    tabla.empty(); // Limpiar la tabla antes de llenarla
+
+    datos.forEach(item => {
+        const fila = `<tr>
+        <td>${item}</td>
+    </tr>`;
+        tabla.append(fila);
+    });    
+}
 
 function showResume() {
     const planSeleccionado = $('#plan').val();
@@ -138,18 +181,16 @@ function showResume() {
     });
 }
 
-
 function llenarTabla(datos, mostrarLinea) {
     const tabla = $('#tablaResumen tbody');
     tabla.empty();
-    datos.forEach(item => {
+    datos.forEach((item, index) => {
         const linea = item.Linea || 'N/A';
         const noParte = item.NoParte || 'N/A';
         const cantidadEtiquetas = item.CantidadEtiquetas || 0;
         const etiquetasParciales = item.EtiquetasParciales || '';
         const usuarioRecibido = item.UsuarioRecibio;
         const fechaEntrega = item.FechaEntrega;
-
 
         let tieneUsuario = false;
 
@@ -160,15 +201,27 @@ function llenarTabla(datos, mostrarLinea) {
             tieneUsuario = true;
         }
 
-        const fila = `<tr>
+        const fila = `<tr id="fila-${index}" 
+                          data-no-parte="${noParte}">
             ${mostrarLinea ? `<td>${linea}</td>` : ''}
-            <td>${noParte}</td>
-            <td>${cantidadEtiquetas}</td>
-            <td>${etiquetasParciales}</td>
+            <td style="font-size: 14px; font-weight: bold;">${noParte}</td>
+            <td style="font-size: 14px; font-weight: bold;">${cantidadEtiquetas}</td>
+            <td style="font-size: 14px; font-weight: bold;">${etiquetasParciales}</td>
             <td>${tieneUsuario ? `<i class="fas fa-check"></i> ${usuarioRecibido}` : `<i class="fas fa-times-circle"></i> No entregado aun`}</td>
             <td>${fechaEntrega}</td>
             </tr>`;
 
         tabla.append(fila);
+    });
+
+    $('#tablaResumen tbody').on('click', 'tr', function () {
+        console.log("Clic en la fila :)");
+        const noParte = $(this).data('no-parte');
+        const planSeleccionado = $('#plan').val(); 
+        const fechaSeleccionada = $('#startDate').val(); 
+
+        $('#modalNoParte').text(noParte);
+        obtenerDetalleEtiquetas(noParte, planSeleccionado, fechaSeleccionada); 
+        $('#modalDetalle').modal('show');
     });
 }

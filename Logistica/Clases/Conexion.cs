@@ -799,7 +799,7 @@ namespace TruckyV2.Clases
                 try
                 {
                     connection.Open();
-                    string query = "Select DISTINCT(Linea) FROM PlanSemanalEtiquetas WHERE Proceso = @PlanSeleccionado ORDER BY Linea";
+                    string query = "Select DISTINCT(Linea) FROM Tier2_EntregaEtiquetas WHERE Proceso = @PlanSeleccionado ORDER BY Linea";
 
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -847,7 +847,26 @@ namespace TruckyV2.Clases
                 {
                     connection.Open();
                     using (SqlCommand command = new SqlCommand(
-                        "Select * FROM Tier2_EntregaEtiquetas WHERE FechaPlan = @Fecha AND Proceso = @Plan ORDER BY Linea, NoParte", connection))
+                        "SELECT " +
+                        "   NoParte, " +
+                        "   COUNT(CASE WHEN NoEtiqueta NOT LIKE 'P%' THEN 1 END) AS TotalEtiquetasNormales, " +
+                        "   COUNT(CASE WHEN NoEtiqueta LIKE 'P%' THEN 1 END) AS TotalEtiquetasParciales, " +
+                        "   MAX(FechaEntrega) AS FechaEntrega," +
+                        "   MAX(UsuarioRecibio) AS UsuarioRecibio, " +
+                        "   Linea " +
+                        "FROM " +
+                        "   Tier2_EntregaEtiquetas " +
+                        "WHERE " +
+                        "   FechaPlan = @Fecha " +
+                        "   AND Proceso = @Plan " +
+                        "GROUP BY " +
+                        "   NoParte, " +
+                        "   Proceso, " +
+                        "   Linea, " +
+                        "   FechaPlan " +
+                        "ORDER BY " +
+                        "   Linea," +
+                        "   NoParte;", connection))
                     {
                         command.Parameters.Add("@Plan", SqlDbType.VarChar).Value = plan;
                         command.Parameters.Add("@Fecha", SqlDbType.Date).Value = fechaConvertida;
@@ -860,8 +879,8 @@ namespace TruckyV2.Clases
                                 {
                                     Linea = reader["Linea"].ToString(),
                                     NoParte = reader["NoParte"].ToString(),
-                                    CantidadEtiquetas = (reader.IsDBNull(reader.GetOrdinal("CantidadEtiquetas")) ? 0 : reader.GetInt32(reader.GetOrdinal("CantidadEtiquetas"))).ToString(),
-                                    EtiquetasParciales = (reader.IsDBNull(reader.GetOrdinal("CantidadParcial")) ? 0 : reader.GetInt32(reader.GetOrdinal("CantidadParcial"))).ToString(),
+                                    CantidadEtiquetas = (reader.IsDBNull(reader.GetOrdinal("TotalEtiquetasNormales")) ? 0 : reader.GetInt32(reader.GetOrdinal("TotalEtiquetasNormales"))).ToString(),
+                                    EtiquetasParciales = (reader.IsDBNull(reader.GetOrdinal("TotalEtiquetasParciales")) ? 0 : reader.GetInt32(reader.GetOrdinal("TotalEtiquetasParciales"))).ToString(),
                                     UsuarioRecibio = reader["UsuarioRecibio"].ToString(),
                                     FechaEntrega = reader["FechaEntrega"].ToString()
                                 };
@@ -901,7 +920,26 @@ namespace TruckyV2.Clases
                 {
                     connection.Open();
                     using (SqlCommand command = new SqlCommand(
-                        "Select * FROM Tier2_EntregaEtiquetas WHERE FechaPlan = @Fecha AND Proceso = @Plan AND Linea = @Linea", connection))
+                        "SELECT " +
+                        "   NoParte, " +
+                        "   COUNT(CASE WHEN NoEtiqueta NOT LIKE 'P%' THEN 1 END) AS TotalEtiquetasNormales, " +
+                        "   COUNT(CASE WHEN NoEtiqueta LIKE 'P%' THEN 1 END) AS TotalEtiquetasParciales, " +
+                        "   MAX(FechaEntrega) AS FechaEntrega, " +
+                        "   MAX(UsuarioRecibio) AS UsuarioRecibio " +
+                        "FROM " +
+                        "   Tier2_EntregaEtiquetas " +
+                        "WHERE " +
+                        "   FechaPlan = @Fecha " +
+                        "   AND Proceso = @Plan " +
+                        "   AND Linea = @Linea " +
+                        "GROUP BY " +
+                        "   NoParte, " +
+                        "   Proceso, " +
+                        "   Linea, " +
+                        "   FechaPlan " +
+                        "ORDER BY " +
+                        "   Linea," +
+                        "   NoParte;", connection))
                     {
                         command.Parameters.Add("@Plan", SqlDbType.VarChar).Value = plan;
                         command.Parameters.Add("@Fecha", SqlDbType.Date).Value = fechaConvertida;
@@ -914,8 +952,8 @@ namespace TruckyV2.Clases
                                 var registro = new ResumenPlan
                                 {
                                     NoParte = reader["NoParte"].ToString(),
-                                    CantidadEtiquetas = (reader.IsDBNull(reader.GetOrdinal("CantidadEtiquetas")) ? 0 : reader.GetInt32(reader.GetOrdinal("CantidadEtiquetas"))).ToString(),
-                                    EtiquetasParciales = (reader.IsDBNull(reader.GetOrdinal("CantidadParcial")) ? 0 : reader.GetInt32(reader.GetOrdinal("CantidadParcial"))).ToString(),
+                                    CantidadEtiquetas = (reader.IsDBNull(reader.GetOrdinal("TotalEtiquetasNormales")) ? 0 : reader.GetInt32(reader.GetOrdinal("TotalEtiquetasNormales"))).ToString(),
+                                    EtiquetasParciales = (reader.IsDBNull(reader.GetOrdinal("TotalEtiquetasParciales")) ? 0 : reader.GetInt32(reader.GetOrdinal("TotalEtiquetasParciales"))).ToString(),
                                     UsuarioRecibio = reader["UsuarioRecibio"].ToString(),
                                     FechaEntrega = reader["FechaEntrega"].ToString()
                                 };
@@ -930,6 +968,45 @@ namespace TruckyV2.Clases
             {
                 System.Diagnostics.Debug.WriteLine("Error en el Conexion-ObtenerResumenCompleto: " + ex.Message);
                 throw;
+            }
+        }
+
+        public List<string> consultarDetalleEtiquetasEntrega(string noParte, string proceso, string fecha)
+        {
+            var listaNoEtq = new List<string>();
+            using (SqlConnection connection = new SqlConnection(cnP))
+            {
+                try
+                {
+                    connection.Open();
+                    string query = "SELECT NoEtiqueta FROM Tier2_EntregaEtiquetas WHERE NoParte = @NoParte AND Proceso = @Proceso AND FechaPlan = @Fecha ORDER BY NoEtiqueta";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add("@NoParte", SqlDbType.VarChar).Value = noParte;
+                        command.Parameters.Add("@Proceso", SqlDbType.VarChar).Value = proceso;
+                        command.Parameters.Add("@Fecha", SqlDbType.Date).Value = fecha;
+
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                listaNoEtq.Add(reader["NoEtiqueta"].ToString());
+                            }
+                        }
+                    }
+                    return listaNoEtq;
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+                finally
+                {
+                    if (connection.State == System.Data.ConnectionState.Open)
+                    {
+                        connection.Close();
+                    }
+                }
             }
         }
 
@@ -981,7 +1058,7 @@ namespace TruckyV2.Clases
                 try
                 {
                     connection.Open();
-                    string query = "SELECT NoParte, NoEtiqueta, Estado FROM CAT_ETIQS_PLASTICAS WHERE No Parte = @NoParte ORDER BY NoEtiqueta";
+                    string query = "SELECT NoEtiqueta, Estado, PlanSema FROM CAT_ETIQS_PLASTICAS WHERE NoParte = @NoParte ORDER BY NoEtiqueta";
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         command.Parameters.Add("@NoParte", SqlDbType.VarChar).Value = NoParte;
@@ -991,9 +1068,9 @@ namespace TruckyV2.Clases
                             {
                                 listaDetalleEtq.Add(new
                                 {
-                                    NoParte = reader["NoParte"].ToString(),
                                     NoEtiqueta = reader["NoEtiqueta"].ToString(),
-                                    Estado = Convert.ToInt32(reader["Estado"])
+                                    Estado = Convert.ToInt32(reader["Estado"]),
+                                    UltimoUso = reader["PlanSema"].ToString(),
                                 });
                             }
                         }

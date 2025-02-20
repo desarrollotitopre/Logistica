@@ -3,12 +3,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
-
-
-
-
-
 <div class="pagetitle">
     <h1>Consultar Número de etiquetas</h1>
     <nav>
@@ -60,6 +54,40 @@
         </table>
     </div>
 </div>
+
+<!--  DETALLE DE ETIQUETAS  -->
+<div class="modal fade" id="modalDetalle" tabindex="-1" role="dialog" aria-labelledby="modalDetalleLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDetalleLabel">Detalles de catalogo de etiquetas</h5>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 26px"><strong id="modalNoParte"></strong></p>
+                <!-- Tabla para mostrar el detalle de las etiquetas -->
+                <table id="tablaDetalleEtiquetas" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Números de etiqueta</th>
+                            <th>Estado</th>
+                            <th>Plan último uso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Las filas se llenarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <!-- Botón de cerrar en el footer -->
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 <!-- Scripts -->
 <link href="~/styles/StyleDashboard.css" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>

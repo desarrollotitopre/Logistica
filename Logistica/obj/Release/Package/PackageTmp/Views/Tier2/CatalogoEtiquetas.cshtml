@@ -3,50 +3,34 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container-fluid">
-    <!-- Header Section -->
-    <div class="header-section">
-        <h1 class="mt-2">Catalogo etiquetas</h1>
-        <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Consultar numero de etiquetas</li>
+<div class="pagetitle">
+    <h1>Consultar Número de etiquetas</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Dashboard", "Home")">Home</a></li>
+            <li class="breadcrumb-item">Tier 2</li>
+            <li class="breadcrumb-item active">Catalogo de etiquetas</li>
         </ol>
+    </nav>
+</div>
+
+<!-- Main Card -->
+<div class="card">
+    <!-- Card Header -->
+    <div class="card-header">
+        <i class="fas fa-boxes me-1"></i>
+        Total de Etiquetas
     </div>
 
-
-
-    <!-- Main Card -->
-    <div class="card">
-        <!-- Card Header -->
-        <div class="card-header">
-            <i class="fas fa-boxes me-1"></i>
-            Total de Etiquetas
-        </div>
-
-        <!-- Card Body -->
-        <div class="card-body">
-            <!-- Data Table -->
-            <div class="table-responsive mt-3">
-                <table id="tablaEtiquetas" class="table-custom" style="width:70%">
-                    <thead>
-                        <tr>
-                            <th class="break-word">Numero de parte</th>
-                            <th class="break-word">Total de etiquetas</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="detalleEtiquetas" style="margin-top: 20px; display: none;">
-            <h4>Detalle de etiquetas</h4>
-            <table id="tablaDetalle" class="table-custom" style="width: 70%">
+    <!-- Card Body -->
+    <div class="card-body">
+        <!-- Data Table -->
+        <div class="table-responsive mt-3">
+            <table id="tablaEtiquetas" class="table-custom" style="width:70%">
                 <thead>
                     <tr>
-                        <th>No. Parte</th>
-                        <th>Etiqueta</th>
-                        <th>Estado</th>
+                        <th class="break-word">Numero de parte</th>
+                        <th class="break-word">Total de etiquetas</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -54,7 +38,55 @@
             </table>
         </div>
     </div>
+
+    <div id="detalleEtiquetas" style="margin-top: 20px; display: none;">
+        <h4>Detalle de etiquetas</h4>
+        <table id="tablaDetalle" class="table-custom" style="width: 70%">
+            <thead>
+                <tr>
+                    <th>No. Parte</th>
+                    <th>Etiqueta</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<!--  DETALLE DE ETIQUETAS  -->
+<div class="modal fade" id="modalDetalle" tabindex="-1" role="dialog" aria-labelledby="modalDetalleLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDetalleLabel">Detalles de catalogo de etiquetas</h5>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 26px"><strong id="modalNoParte"></strong></p>
+                <!-- Tabla para mostrar el detalle de las etiquetas -->
+                <table id="tablaDetalleEtiquetas" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Números de etiqueta</th>
+                            <th>Estado</th>
+                            <th>Plan último uso</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Las filas se llenarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <!-- Botón de cerrar en el footer -->
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 
 <!-- Scripts -->
 <link href="~/styles/StyleDashboard.css" rel="stylesheet">

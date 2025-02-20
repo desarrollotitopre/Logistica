@@ -3,104 +3,113 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container-fluid">
-    <!-- Header Section -->
-    <div class="header-section">
-        <h1 class="mt-2">Plan de etiquetas semanal</h1>
-        <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Cargar archivo de etiquetas</li>
+
+
+<div class="pagetitle">
+    <h1>Plan de etiquetas semanal</h1>
+    <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Dashboard", "Home")">Home</a></li>
+            <li class="breadcrumb-item">Tier 2</li>
+            <li class="breadcrumb-item active">Cargar Plan</li>
         </ol>
+    </nav>
+</div>
+
+
+
+<!-- Main Card -->
+<div class="card">
+    <!-- Card Header -->
+    <div class="card-header">
+        <i class="fas fa-boxes me-1"></i>
+        CARGAR PLAN DE ETIQUETAS XLSX
     </div>
 
-    <!-- Main Card -->
-    <div class="card">
-        <!-- Card Header -->
-        <div class="card-header">
-            <i class="fas fa-boxes me-1"></i>
-            CARGAR PLAN DE ETIQUETAS XLSX
+    <!-- Card Body -->
+    <div class="card-body">
+
+        <div class="row">
+            <!-- Process Selection -->
+            <div class="col-sm-12 col-md-3 col-lg-3 col-xl-3">
+                <div class="form-floating input-group">
+                    <span class="input-group-text" style="cursor:pointer"><i class="fas fa-sitemap"></i></span>
+                    <select class="form-select" id="proceso" name="proceso" aria-label="Stat" required>
+                        <option value="ENSAMBLE">ENSAMBLE</option>
+                        <option value="PRENSAS">PRENSAS</option>
+                    </select>
+                    <label style="margin-left: 2.5em; z-index:5" for="proceso">AREA</label>
+                </div>
+            </div>
+
         </div>
 
-        <!-- Card Body -->
-        <div class="card-body">
-            <!-- Process Selection -->
-            <div class="row mb-3">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label for="proceso" class="form-label">ÁREA</label>
-                        <select class="form-control" id="proceso" name="proceso">
-                            <option value="ENSAMBLE">ENSAMBLE</option>
-                            <option value="PRENSAS">PRENSAS</option>
-                        </select>
-                    </div>
+
+        <!-- File Upload Section -->
+        <div class="row mb-3">
+
+            <div class="col-12 mb-2">
+                <input type="file" id="excelFile" accept=".xlsx" class="d-none" />
+                @*<div class="button-group">
+                    <button type="button" id="btnCargarXLSX" class="btnCustom btn-primary"
+                            onclick="uploadExcel()">
+                        <i class="fas fa-file-excel btn-icon"></i> SELECCIONAR EXCEL
+                    </button>
+                    <button type="button" id="btnInsertar" class="btnCustom btn-primary"
+                            data-bs-toggle="modal" data-bs-target="#myModal"
+                            onclick="setValue()" style="display: none;">
+                        <i class="fas fa-check btn-icon"></i> CARGAR PLAN
+                    </button>
+                </div>*@
+
+                <span id="fileName" class="ms-2"></span>
+            </div>
+            <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2">
+                <div div class="input-group">
+                    <button type="button" id="btnCargarXLSX" class="form-control btn btn-outline-success" onclick="uploadExcel()">
+                        <i class="fas fa-file-excel fa-2x btnIcon"></i> Abrir excel
+                    </button>
                 </div>
             </div>
-
-            <!-- File Upload Section -->
-            <div class="row mb-3">
-
-                <div class="col-12 mb-2">
-                    <input type="file" id="excelFile" accept=".xlsx" class="d-none" />
-                    @*<div class="button-group">
-                <button type="button" id="btnCargarXLSX" class="btnCustom btn-primary"
-                        onclick="uploadExcel()">
-                    <i class="fas fa-file-excel btn-icon"></i> SELECCIONAR EXCEL
-                </button>
-                <button type="button" id="btnInsertar" class="btnCustom btn-primary"
-                        data-bs-toggle="modal" data-bs-target="#myModal"
-                        onclick="setValue()" style="display: none;">
-                    <i class="fas fa-check btn-icon"></i> CARGAR PLAN
-                </button>
-            </div>*@
-
-                    <span id="fileName" class="ms-2"></span>
-                </div>
-                <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2">
-                    <div div class="input-group">
-                        <button type="button" id="btnCargarXLSX" class="form-control btn btn-outline-success" onclick="uploadExcel()">
-                            <i class="fas fa-file-excel fa-2x btnIcon"></i> Abrir excel
-                        </button>
-                    </div>
-                </div>
-                <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2">
-                    <div div class="">
-                        <button type="button" id="btnInsertar" class="form-control btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#myModal" onclick="setValue()" style="display:none">
-                            <i class="fas fa-check fa-2x btnIcon"></i> Subir plan
-                        </button>
-                    </div>
+            <div class="col-sm-12 col-md-2 col-lg-2 col-xl-2">
+                <div div class="">
+                    <button type="button" id="btnInsertar" class="form-control btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#myModal" onclick="setValue()" style="display:none">
+                        <i class="fas fa-check fa-2x btnIcon"></i> Subir plan
+                    </button>
                 </div>
             </div>
-            
-            <!-- Loading Spinner -->
-            <div id="spinner" class="text-center" style="display: none;">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Cargando...</span>
-                </div>
-            </div>
+        </div>
 
-            <!-- Error Container -->
-            <div id="errorContainer" class="alert alert-danger mt-3" style="display: none;"></div>
-
-            <!-- Data Table -->
-            <div class="table-responsive mt-3">
-                <table id="xlsxPreviewTable" class="table-custom" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th class="break-word">Linea</th>
-                            <th class="break-word">Numero de parte</th>
-                            <th class="break-word">Lunes</th>
-                            <th class="break-word">Martes</th>
-                            <th class="break-word">Miércoles</th>
-                            <th class="break-word">Jueves</th>
-                            <th class="break-word">Viernes</th>
-                            <th class="break-word">Sábado</th>
-                            <th class="break-word" id="domingoCol">Domingo</th>
-                            <th class="break-word" id="totalcount">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+        <!-- Loading Spinner -->
+        <div id="spinner" class="text-center" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
             </div>
+        </div>
+
+        <!-- Error Container -->
+        <div id="errorContainer" class="alert alert-danger mt-3" style="display: none;"></div>
+
+        <!-- Data Table -->
+        <div class="table-responsive mt-3">
+            <table id="xlsxPreviewTable" class="table-custom" style="width:100%">
+                <thead>
+                    <tr>
+                        <th class="break-word">Linea</th>
+                        <th class="break-word">Numero de parte</th>
+                        <th class="break-word">Lunes</th>
+                        <th class="break-word">Martes</th>
+                        <th class="break-word">Miércoles</th>
+                        <th class="break-word">Jueves</th>
+                        <th class="break-word">Viernes</th>
+                        <th class="break-word">Sábado</th>
+                        <th class="break-word" id="domingoCol">Domingo</th>
+                        <th class="break-word" id="totalcount">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

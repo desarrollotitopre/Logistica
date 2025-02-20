@@ -419,6 +419,26 @@ namespace Logistica.Controllers
             }
         }
 
+        [AuthorizeModule(1)]
+        [HttpPost]
+        public JsonResult obtenerDetalleEtiquetas(string noParte, string proceso, string fecha)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(noParte))
+                {
+                    return Json(new { success = false, message = "No se ha proporcionado el número de parte." });
+                }
+                Conexion conexion = new Conexion();
+                List<string> listaDetalles = conexion.consultarDetalleEtiquetasEntrega(noParte, proceso, fecha);
+                return Json(new { success = true, data = listaDetalles });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
         //////   Catalogo Etiquetas
         [AuthorizeModule(1)]
         [HttpPost]
@@ -438,12 +458,12 @@ namespace Logistica.Controllers
 
         [AuthorizeModule(1)]
         [HttpPost]
-        private JsonResult consultarDetalleEtiquetas(string NoParte)
+        public JsonResult consultarDetalleEtiquetas(string noParte)
         {
             try
             {
                 Conexion conexion = new Conexion();
-                List<object> listaDetalles = conexion.consultarDetalleEtiquetas(NoParte);
+                List<object> listaDetalles = conexion.consultarDetalleEtiquetas(noParte);
                 return Json(new { success = true, data = listaDetalles }, JsonRequestBehavior.AllowGet);
 
             }

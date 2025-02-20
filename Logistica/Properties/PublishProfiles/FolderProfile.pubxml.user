@@ -5,18 +5,18 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>\\192.168.40.240\wwwroot\Logistica</_PublishTargetUrl>
-    <History>True|2025-02-18T22:03:11.6547549Z||;True|2025-02-18T12:38:45.9261840-06:00||;</History>
+    <History>True|2025-02-20T15:28:25.9615534Z||;True|2025-02-18T16:03:11.6547549-06:00||;True|2025-02-18T12:38:45.9261840-06:00||;</History>
     <LastFailureDetails />
   </PropertyGroup>
   <ItemGroup>
     <File Include="assets/css/Login.css">
-      <publishTime>02/18/2025 12:29:18</publishTime>
+      <publishTime>02/19/2025 14:56:53</publishTime>
     </File>
     <File Include="assets/css/style.css">
-      <publishTime>02/18/2025 12:29:18</publishTime>
+      <publishTime>02/19/2025 14:56:53</publishTime>
     </File>
     <File Include="assets/css/StyleDashboard.css">
-      <publishTime>02/18/2025 12:29:18</publishTime>
+      <publishTime>02/19/2025 14:56:53</publishTime>
     </File>
     <File Include="assets/css/style_reset_password.css">
       <publishTime>02/18/2025 12:29:18</publishTime>
@@ -331,10 +331,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>02/18/2025 12:29:18</publishTime>
     </File>
     <File Include="assets/js/Tier2/CatalogoEtiquetas.js">
-      <publishTime>02/18/2025 14:27:56</publishTime>
+      <publishTime>02/20/2025 08:18:43</publishTime>
     </File>
     <File Include="assets/js/Tier2/ConsultarPlanes.js">
-      <publishTime>02/18/2025 14:49:53</publishTime>
+      <publishTime>02/20/2025 08:31:44</publishTime>
     </File>
     <File Include="assets/js/Tier2/ModificarPlan.js">
       <publishTime>02/18/2025 14:50:16</publishTime>
@@ -544,10 +544,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>02/18/2025 12:29:19</publishTime>
     </File>
     <File Include="bin/Logistica.dll">
-      <publishTime>02/18/2025 16:00:23</publishTime>
+      <publishTime>02/20/2025 09:26:37</publishTime>
     </File>
     <File Include="bin/Logistica.pdb">
-      <publishTime>02/18/2025 16:00:23</publishTime>
+      <publishTime>02/20/2025 09:26:37</publishTime>
     </File>
     <File Include="bin/Microsoft.AspNetCore.Antiforgery.dll">
       <publishTime>02/18/2025 12:29:19</publishTime>
@@ -962,6 +962,24 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
     </File>
     <File Include="Content/bootstrap.rtl.min.css.map">
       <publishTime>02/18/2025 12:29:18</publishTime>
+    </File>
+    <File Include="Content/Cropper/cropper.common.js">
+      <publishTime>02/19/2025 14:56:53</publishTime>
+    </File>
+    <File Include="Content/Cropper/cropper.css">
+      <publishTime>02/19/2025 14:56:53</publishTime>
+    </File>
+    <File Include="Content/Cropper/cropper.esm.js">
+      <publishTime>02/19/2025 14:56:53</publishTime>
+    </File>
+    <File Include="Content/Cropper/cropper.js">
+      <publishTime>02/19/2025 14:56:53</publishTime>
+    </File>
+    <File Include="Content/Cropper/cropper.min.css">
+      <publishTime>02/19/2025 14:56:53</publishTime>
+    </File>
+    <File Include="Content/Cropper/cropper.min.js">
+      <publishTime>02/19/2025 14:56:53</publishTime>
     </File>
     <File Include="Content/DataTables/css/autoFill.bootstrap.css">
       <publishTime>02/18/2025 12:29:17</publishTime>
@@ -2092,7 +2110,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>02/18/2025 12:29:18</publishTime>
     </File>
     <File Include="Views/Acceso/Login.cshtml">
-      <publishTime>02/18/2025 12:29:18</publishTime>
+      <publishTime>02/19/2025 14:56:53</publishTime>
     </File>
     <File Include="Views/Acceso/resetPassword.cshtml">
       <publishTime>02/18/2025 12:29:18</publishTime>
@@ -2110,25 +2128,25 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>02/18/2025 12:29:18</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>02/18/2025 14:28:51</publishTime>
+      <publishTime>02/20/2025 08:35:55</publishTime>
     </File>
     <File Include="Views/Tier2/CatalogoEtiquetas.cshtml">
-      <publishTime>02/18/2025 14:30:38</publishTime>
+      <publishTime>02/19/2025 17:12:31</publishTime>
     </File>
     <File Include="Views/Tier2/ConsultarPlanes.cshtml">
-      <publishTime>02/18/2025 14:51:51</publishTime>
+      <publishTime>02/19/2025 16:58:33</publishTime>
     </File>
     <File Include="Views/Tier2/ModificarPlan.cshtml">
-      <publishTime>02/18/2025 14:51:41</publishTime>
+      <publishTime>02/19/2025 14:56:53</publishTime>
     </File>
     <File Include="Views/Tier2/PlanEtiquetas.cshtml">
-      <publishTime>02/18/2025 15:40:22</publishTime>
+      <publishTime>02/19/2025 14:56:53</publishTime>
     </File>
     <File Include="Views/Transportes/CargaPlan.cshtml">
-      <publishTime>02/18/2025 12:29:18</publishTime>
+      <publishTime>02/19/2025 14:56:53</publishTime>
     </File>
     <File Include="Views/Transportes/Dashboard.cshtml">
-      <publishTime>02/18/2025 12:29:18</publishTime>
+      <publishTime>02/19/2025 14:56:53</publishTime>
     </File>
     <File Include="Views/Transportes/gestionFolio.cshtml">
       <publishTime>02/18/2025 12:29:18</publishTime>

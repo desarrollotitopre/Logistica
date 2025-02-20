@@ -90,6 +90,35 @@
     </div>
 </div>
 
+<!--  DETALLE DE ETIQUETAS  -->
+<div class="modal fade" id="modalDetalle" tabindex="-1" role="dialog" aria-labelledby="modalDetalleLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDetalleLabel">Numero de etiqueta por No. Parte</h5>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 26px"><strong id="modalNoParte"></strong></p>
+                <!-- Tabla para mostrar el detalle de las etiquetas -->
+                <table id="tablaDetalleEtiquetas" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Numeros de etiqueta</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Las filas se llenarán dinámicamente -->
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Scripts -->
 <link href="~/styles/StyleDashboard.css" rel="stylesheet">
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>

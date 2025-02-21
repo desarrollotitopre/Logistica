@@ -14,7 +14,7 @@ namespace Logistica.Controllers
     public class Tier2Controller : Controller
     {
 
-        [AuthorizeModule(1)]
+        [AuthorizeModule(6,7,8)]
         public bool IsSessionActive()
         {
             try
@@ -61,32 +61,32 @@ namespace Logistica.Controllers
         }
 
         /////////   Vistas
-        [AuthorizeModule(1)]
+        [AuthorizeModule(6, 7)]
         public ActionResult PlanEtiquetas()
         {
             return View();
 
         }
-        [AuthorizeModule(1)]
+        [AuthorizeModule(6, 7)]
         public ActionResult ModificarPlan()
         {
             return View();
 
         }
-        [AuthorizeModule(1)]
+        [AuthorizeModule(6, 7, 8)]
         public ActionResult ConsultarPlanes()
         {
             return View();
             
         }
-        [AuthorizeModule(1)]
+        [AuthorizeModule(6, 7, 8)]
         public ActionResult CatalogoEtiquetas()
         {
             return View();
         }
 
         ////// Plan etiquetas
-        [AuthorizeModule(1)]
+        [AuthorizeModule(6, 7)]
         [HttpPost]
         public JsonResult datosPlanSemanalPrensas(List<PlanPrensas> datosXLSX, string nombreUsuario, FechasSemana fechasDias, string nombrePlan, string proceso)
         {
@@ -170,7 +170,7 @@ namespace Logistica.Controllers
             }
         }
 
-        [AuthorizeModule(1)]
+        [AuthorizeModule(6, 7)]
         [HttpPost] 
         public JsonResult datosPlanSemanal(List<PlanEtiquetas> datosXLSX, string nombreUsuario, FechasSemana fechasDias, string nombrePlan, string proceso)
         {
@@ -327,7 +327,7 @@ namespace Logistica.Controllers
         }
 
         ////// Modificar Plan
-        [AuthorizeModule(1)]
+        [AuthorizeModule(6, 7)]
         [HttpPost]
         public JsonResult consultarPlan(string proceso, string fecha)
         {
@@ -351,7 +351,7 @@ namespace Logistica.Controllers
             }
         }
 
-        [AuthorizeModule(1)]
+        [AuthorizeModule(6, 7)]
         [HttpPost]
         public JsonResult actualizarPlan(string proceso, string fecha, List<RegistroActualizacion> registros)
         {
@@ -368,7 +368,7 @@ namespace Logistica.Controllers
         }
 
         //////   Consultar Planes
-        [AuthorizeModule(1)]
+        [AuthorizeModule(6, 7, 8)]
         [HttpPost]
         public JsonResult consultarListaLineas(string planSeleccionado)
         {
@@ -389,7 +389,7 @@ namespace Logistica.Controllers
             }
         }
 
-        [AuthorizeModule(1)]
+        [AuthorizeModule(6, 7, 8)]
         [HttpPost]
         public JsonResult obtenerResumen(string plan, string linea, string fecha, bool planCompleto)
         {
@@ -419,7 +419,7 @@ namespace Logistica.Controllers
             }
         }
 
-        [AuthorizeModule(1)]
+        [AuthorizeModule(6, 7, 8)]
         [HttpPost]
         public JsonResult obtenerDetalleEtiquetas(string noParte, string proceso, string fecha)
         {
@@ -440,7 +440,7 @@ namespace Logistica.Controllers
         }
 
         //////   Catalogo Etiquetas
-        [AuthorizeModule(1)]
+        [AuthorizeModule(6, 7, 8)]
         [HttpPost]
         public JsonResult consultarEtiquetas()
         {
@@ -456,7 +456,7 @@ namespace Logistica.Controllers
             }
         }
 
-        [AuthorizeModule(1)]
+        [AuthorizeModule(6, 7, 8)]
         [HttpPost]
         public JsonResult consultarDetalleEtiquetas(string noParte)
         {
@@ -474,7 +474,7 @@ namespace Logistica.Controllers
         }
         
         //////   Funciones adicionales
-        [AuthorizeModule(1)]
+        [AuthorizeModule(6, 7, 8)]
         private RegistroPlanBD CrearRegistro(string linea, string nombrePlan, string noParte, string fecha, int cantidad, string usuario, bool esParcial, string proceso)
         {
             return new RegistroPlanBD
@@ -489,7 +489,7 @@ namespace Logistica.Controllers
                 Proceso = proceso
             };
         }
-        [AuthorizeModule(1)]
+        [AuthorizeModule(6, 7, 8)]
         private RegistroPlanBD CrearRegistroPrensas(string linea, string nombrePlan, string noParte, string fecha, int cantidad, string usuario, bool esParcial, string proceso)
         {
             return new RegistroPlanBD
@@ -504,7 +504,7 @@ namespace Logistica.Controllers
                 Proceso = proceso
             };
         }
-
+        [AuthorizeModule(6, 7, 8)]
         private int ConvertToInt(String value)
         {
             if (string.IsNullOrWhiteSpace(value))

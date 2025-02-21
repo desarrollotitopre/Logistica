@@ -166,16 +166,19 @@
 
                         </ul>
                     </li><!-- End Forms Nav -->
-                    }
+                                }
 
-                    //if (perfil != null && (perfil.Contains(6) || perfil.Contains(7)))
-                    if (perfil != null && (perfil.Contains(1)))
-                    {
+                                //if (perfil != null && (perfil.Contains(6) || perfil.Contains(7)))
+                                if (perfil != null && (perfil.Contains(7) || perfil.Contains(8) || perfil.Contains(6)))
+                                {
                     <li class="nav-item">
                         <a class="nav-link collapsed" data-bs-target="#forms-nav-tier2" data-bs-toggle="collapse" href="#">
                             <i class="fas fa-tags"></i><span> Tier2</span><i class="fas fa-chevron-down ms-auto"></i>
                         </a>
                         <ul id="forms-nav-tier2" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                            @{ 
+                                if (perfil != null && (perfil.Contains(7)) || perfil.Contains(6))
+                                {
                             <li>
                                 <a href="@Url.Action("PlanEtiquetas", "Tier2")" style="cursor:pointer">
                                     <i class="fas fa-angle-right"></i><span> Cargar plan</span>
@@ -186,6 +189,8 @@
                                     <i class="fas fa-angle-right"></i><span> Modificar plan</span>
                                 </a>
                             </li>
+                                }
+                            }
                             <li>
                                 <a href="@Url.Action("ConsultarPlanes", "Tier2")" style="cursor:pointer">
                                     <i class="fas fa-angle-right"></i><span> Etiquetas entregadas</span>

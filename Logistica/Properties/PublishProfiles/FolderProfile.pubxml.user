@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>\\192.168.40.240\wwwroot\Logistica</_PublishTargetUrl>
-    <History>True|2025-02-21T17:04:04.7282889Z||;True|2025-02-20T09:28:25.9615534-06:00||;True|2025-02-18T16:03:11.6547549-06:00||;True|2025-02-18T12:38:45.9261840-06:00||;</History>
+    <History>True|2025-02-21T18:19:43.4552008Z||;True|2025-02-21T11:04:04.7282889-06:00||;True|2025-02-20T09:28:25.9615534-06:00||;True|2025-02-18T16:03:11.6547549-06:00||;True|2025-02-18T12:38:45.9261840-06:00||;</History>
     <LastFailureDetails />
   </PropertyGroup>
   <ItemGroup>
@@ -544,10 +544,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>02/18/2025 12:29:19</publishTime>
     </File>
     <File Include="bin/Logistica.dll">
-      <publishTime>02/21/2025 11:01:53</publishTime>
+      <publishTime>02/21/2025 12:12:45</publishTime>
     </File>
     <File Include="bin/Logistica.pdb">
-      <publishTime>02/21/2025 11:01:53</publishTime>
+      <publishTime>02/21/2025 12:12:45</publishTime>
     </File>
     <File Include="bin/Microsoft.AspNetCore.Antiforgery.dll">
       <publishTime>02/18/2025 12:29:19</publishTime>
@@ -2128,7 +2128,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>02/18/2025 12:29:18</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>02/20/2025 08:35:55</publishTime>
+      <publishTime>02/21/2025 12:09:27</publishTime>
     </File>
     <File Include="Views/Tier2/CatalogoEtiquetas.cshtml">
       <publishTime>02/19/2025 17:12:31</publishTime>

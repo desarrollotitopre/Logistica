@@ -171,7 +171,7 @@ namespace Logistica.Controllers
         }
 
         [AuthorizeModule(1)]
-        [HttpPost]
+        [HttpPost] 
         public JsonResult datosPlanSemanal(List<PlanEtiquetas> datosXLSX, string nombreUsuario, FechasSemana fechasDias, string nombrePlan, string proceso)
         {
             try

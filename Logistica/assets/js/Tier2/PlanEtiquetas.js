@@ -170,6 +170,9 @@ function processEnsambleExcelData(workbook) {
         if (row) state.tableData.push(row);
         rowIndex++;
     }
+    // Filtrar filas nulas antes de enviar los datos
+    state.tableData = state.tableData.filter(row => row !== null);
+    console.log("Datos a enviar:", state.tableData);
 
     updateTable();
 }
@@ -284,11 +287,11 @@ function processEnsambleRow(worksheet, rowIndex) {
     dias.forEach((col, index) => {
         const dayName = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'][index];
         const cell = worksheet[`${col}${rowIndex}`];
-        const cellValue = cell ? cell.v : undefined; //formatValue(worksheet[`${col}${rowIndex}`]?.v);
+        const cellValue = cell ? cell.v : undefined; 
 
         const value = formatValue(cellValue);
         data[dayName] = value.cantidad;
-        data[`${dayName}Parcial`] = value.esParcial ? 1 : 0;
+        data[`${dayName}Parcial`] = value.esParcial;
 
         if (value.cantidad != 0 || value.esParcial) hasData = true;
     });
@@ -418,7 +421,6 @@ function uploadExcelData() {
             }
         });
     } else if (proceso == 'ENSAMBLE') {
-        console.log("Iniciando AJAX de 'ENSAMBLE'");
         $.ajax({
             url: '/Tier2/datosPlanSemanal',
             type: 'POST',

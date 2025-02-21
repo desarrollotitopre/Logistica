@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>\\192.168.40.240\wwwroot\Logistica</_PublishTargetUrl>
-    <History>True|2025-02-20T15:28:25.9615534Z||;True|2025-02-18T16:03:11.6547549-06:00||;True|2025-02-18T12:38:45.9261840-06:00||;</History>
+    <History>True|2025-02-21T17:04:04.7282889Z||;True|2025-02-20T09:28:25.9615534-06:00||;True|2025-02-18T16:03:11.6547549-06:00||;True|2025-02-18T12:38:45.9261840-06:00||;</History>
     <LastFailureDetails />
   </PropertyGroup>
   <ItemGroup>
@@ -340,7 +340,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>02/18/2025 14:50:16</publishTime>
     </File>
     <File Include="assets/js/Tier2/PlanEtiquetas.js">
-      <publishTime>02/18/2025 15:40:15</publishTime>
+      <publishTime>02/21/2025 10:41:24</publishTime>
     </File>
     <File Include="assets/js/Transportes/CargaPlan.js">
       <publishTime>02/18/2025 12:29:18</publishTime>
@@ -544,10 +544,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>02/18/2025 12:29:19</publishTime>
     </File>
     <File Include="bin/Logistica.dll">
-      <publishTime>02/20/2025 09:26:37</publishTime>
+      <publishTime>02/21/2025 11:01:53</publishTime>
     </File>
     <File Include="bin/Logistica.pdb">
-      <publishTime>02/20/2025 09:26:37</publishTime>
+      <publishTime>02/21/2025 11:01:53</publishTime>
     </File>
     <File Include="bin/Microsoft.AspNetCore.Antiforgery.dll">
       <publishTime>02/18/2025 12:29:19</publishTime>
@@ -2158,7 +2158,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>02/18/2025 12:29:18</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>02/18/2025 16:00:24</publishTime>
+      <publishTime>02/21/2025 11:01:54</publishTime>
     </File>
   </ItemGroup>
 </Project>
